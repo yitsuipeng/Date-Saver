@@ -1,0 +1,418 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Date Saver</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="css/star.png">
+
+        <link rel="stylesheet" href="assets/css/slick.css">
+        <link rel="stylesheet" href="assets/css/slick-theme.css">
+        <link rel="stylesheet" href="assets/css/animate.css">
+        <link rel="stylesheet" href="assets/css/fonticons.css">
+        <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+        <link rel="stylesheet" href="assets/css/bootstrap.css">
+        <link rel="stylesheet" href="assets/css/magnific-popup.css">
+        <link rel="stylesheet" href="assets/css/bootsnav.css">
+
+        <link rel="stylesheet" href="css/filter.css">
+
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+
+
+        <!--For Plugins external css-->
+        <!--<link rel="stylesheet" href="assets/css/plugins.css" />-->
+
+        <!--Theme custom css -->
+        <link rel="stylesheet" href="assets/css/style.css">
+        <!--<link rel="stylesheet" href="assets/css/colors/maron.css">-->
+
+        <!--Theme Responsive css-->
+        <link rel="stylesheet" href="assets/css/responsive.css" />
+
+        <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+
+    <body data-spy="scroll" data-target=".navbar-collapse">
+
+        <!-- Preloader -->
+        <div id="loading">
+            <div id="loading-center">
+                <div id="loading-center-absolute">
+                    <div class="object" id="object_one"></div>
+                    <div class="object" id="object_two"></div>
+                    <div class="object" id="object_three"></div>
+                    <div class="object" id="object_four"></div>
+                </div>
+            </div>
+        </div><!--End off Preloader -->
+
+        <div class="culmn">
+            <!--這裡控制總寬度-->
+
+            <nav class="navbar navbar-default navbar-fixed white no-background bootsnav">
+                <!-- Start Top Search -->
+                <div class="top-search">
+                    <div class="container">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Search">
+                            <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Top Search -->
+
+                <div class="container">    
+                    <!-- Start Atribute Navigation 漢堡以及搜尋鍵-->
+                    <!-- <div class="attr-nav">
+                        <ul>
+                            <li class="search"><a href="#"><i class="fa fa-search"></i></a></li>
+                            <li class="side-menu"><a href="#"><i class="fa fa-bars"></i></a></li>
+                        </ul>
+                    </div>         -->
+                    <!-- End Atribute Navigation -->
+
+                    <!-- Start Header Navigation -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <a class="navbar-brand" href="#brand">
+
+                            <img src="assets/images/logo.png" class="logo logo-display m-top-10" alt="">
+                            <img src="assets/images/logo.jpg" class="logo logo-scrolled" alt="">
+                        </a>
+                    </div>
+                    <!-- End Header Navigation -->
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="navbar-menu">
+                        <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                            <li><a href="planning.html">開始旅程</a></li>                    
+                            <li><a href="#about">熱門旅程</a></li>                    
+                            <li><a href="progile.html">我的約會</a></li>                    
+                            <li><a href="sign.html">登入</a></li>                    
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </div>  
+            </nav>
+
+            <!--Subscribe section 選項攔-->
+            <section id="subscribe" class="subscribe roomy-40 fix">
+                <div class="overlay"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="main_subscribe text-center">
+                            <div class="col-sm-3">
+                                <div class="subscribe_btns m-top-20">
+                                    <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
+                                </div>
+                            </div>
+                            <div class="col-sm-3 ">
+                                <div class="subscribe_btns m-top-20">
+
+                                    <input type="date" class="form-control date" id="date" placeholder="約會日期">
+
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="subscribe_btns m-top-20">
+                                    <form class="form-inline">
+
+                                            <input type="text" class="form-control" id="places-input" placeholder="選一個旅程的起點">
+                                            <div id="start" type="submit" class="btn btn-primary">開始旅程</div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End off row -->
+                </div><!--End off container -->
+            </section><!-- End off Impress section-->
+
+            <!-- map -->
+
+            <div class="container">
+                <div class="row">
+                    <div id="map" style="height:250px"></div>
+                </div>
+            </div>
+
+
+            <!-- 推薦地方 -->
+            <section id="recommand" class="">
+                <div class="container">
+                    <hr>
+                    <div id="myBtnContainer">
+                        <button class="btn active" onclick="filterSelection('all')">給我全部</button>
+                        <button class="btn" onclick="filterSelection('art')">來點文藝</button>
+                        <button class="btn" onclick="filterSelection('fun')">來點有趣</button>
+                        <button class="btn" onclick="filterSelection('park')">來點散步 </button>
+                        <button class="btn" onclick="filterSelection('history')">來點復古</button>
+                        <button class="btn" onclick="filterSelection('hike')">來點踏青</button>
+                        <button class="btn" onclick="filterSelection('shop')">來點逛街</button>
+                        <button class="btn" onclick="filterSelection('night')">來點夜生活</button>
+                        <input id="places-self-input" type="text" placeholder="EX. 電影">
+                        <button id="search-places" class="btn" onclick="filterSelection('choice')">搜尋</button>
+                    </div>
+                    <div id="near-option">
+                        <!-- <div class="filterDiv cars">BMW</div>
+                        <div class="filterDiv cars">Volvo</div>
+                        <div class="filterDiv animals">Cow</div> -->
+                    </div>
+                </div>
+            </section>
+            <!--About Sections-->
+            <section id="about" class="about roomy-50">
+                <div class="container">
+                    <div class="row">
+                        <div class="main_about">
+                            <div class="col-md-6">
+                                <div class="about_content">
+                                    <h3 id="interesting-distance">今天要約會</h3>
+                                    <h3 id="interesting-time"></h3>
+                                    <div class="separator_left"></div>
+                                    <!--這裡要放東西-->
+                                    <div id="self-chosen-site"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button id="optimize-schedule" type="submit" class="btn btn-primary">神啊給我最短路線</button>
+                                <button id="make-schedule" type="submit" class="btn btn-primary">匯出路徑</button>
+                                <button id="save-schedule" type="submit" class="btn btn-primary">儲存旅程</button>
+                                <hr>
+                                <div class="about_accordion wow fadeIn">
+                                    <div id="schedule">點選景點加入選單，拖曳可調整景點順序喔</div>
+                                    <!--這裡要放東西-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End off row-->
+                </div><!--End off container -->
+                 <hr />
+                <br />
+                <br />
+                <div class="container">
+                    <div class="row">
+                        <div class="about_bottom_content">
+                            <div class="col-md-4">
+                                <div class="about_bottom_item m-top-20">
+                                    <div class="ab_head">
+                                        <div class="ab_head_icon">
+                                            <i class="icofont icofont-fire-burn"></i>
+                                        </div>
+                                        <h6 class="m-top-20"> WE’RE CREATIVE</h6>
+                                    </div>
+                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
+                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
+                                        magna diam aliquafm erat voluitpati. </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="about_bottom_item m-top-20">
+                                    <div class="ab_head">
+                                        <div class="ab_head_icon">
+                                            <i class="icofont icofont-speech-comments"></i>
+                                        </div>
+                                        <h6 class="m-top-20">WE'RE FRIENDLY</h6>
+                                    </div>
+                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
+                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
+                                        magna diam aliquafm erat voluitpati. </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="about_bottom_item m-top-20">
+                                    <div class="ab_head">
+                                        <div class="ab_head_icon">
+                                            <i class="icofont icofont-heart"></i>
+                                        </div>
+                                        <h6 class="m-top-20">WE LOVE MINIMALISM</h6>
+                                    </div>
+                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
+                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
+                                        magna diam aliquafm erat voluitpati. </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End off row-->
+                </div><!--End off container -->
+            </section> <!--End off About section -->
+
+
+            <br>
+            <br>
+
+            <!--Testimonial Section-->
+            <section id="testimonial" class="testimonial fix">
+                <div class="overlay"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="main_testimonial roomy-100">
+                            <div class="head_title text-center">
+                                <h2 class="text-white">OUR TESTIMONIALS</h2>
+                            </div>
+                            <div class="testimonial_slid text-center">
+                                <div class="testimonial_item">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
+                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
+                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
+
+                                        <div class="test_authour m-top-30">
+                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="testimonial_item">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
+                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
+                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
+
+                                        <div class="test_authour m-top-30">
+                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="testimonial_item">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
+                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
+                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
+
+                                        <div class="test_authour m-top-30">
+                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="testimonial_item">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
+                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
+                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
+
+                                        <div class="test_authour m-top-30">
+                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!--End off row-->
+                </div><!--End off container -->
+            </section> <!--End off Testimonial section -->
+
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal col-md-4 text-center">
+
+                <!-- Modal content -->
+                <div class="modal-content" style="width:500px">
+                    <span class="close">&times;</span>
+
+                    <!-- <div class="col-md-4 col-sm-12"> -->
+                        <div class="pricing_item sm-m-top-30">
+                            <div class="pricing_top_border"></div>
+                            <div class="pricing_head p-top-30 p-bottom-100 text-center">
+                                <h4 id="plan-name" class="text-uppercase">PREMIUM</h4>
+                                <p id="plan-date" class="text-black">per month</p>
+                            </div>
+                            <div class="pricing_price_border text-center">
+                                <div class="pricing_price">
+                                    <h3 id="plan-distance" class="text-white">$39</h3>
+                                    <p id="plan-time" class="text-white">per month</p>
+                                </div>
+                            </div>
+
+                            <div id="plan-details" class="pricing_body bg-white p-top-110 p-bottom-60">
+                                <!-- <ul>
+                                    <li><i class="fa fa-check-circle text-primary"></i> <span>50</span> user</li>
+                                    <li><i class="fa fa-check-circle text-primary"></i> Unlimited Bandwidth</li>
+                                </ul> -->
+                            </div>
+                            <div class="btn btn-primary text-center m-top-40" id="done">儲存行程
+                            </div>
+                        </div>
+                    <!-- </div>End off col-md-4 -->
+
+                </div>
+    
+            </div>
+
+            <!-- scroll up--   以下都要黏>
+            <div class="scrollup">
+                <a href="#"><i class="fa fa-chevron-up"></i></a>
+            </div> End off scroll up -->
+
+
+            <footer id="footer" class="footer bg-black">
+                <div class="container">
+                    <div class="row">
+                        <div class="main_footer text-center p-top-40 p-bottom-30">
+                            <p class="wow fadeInRight" data-wow-duration="1s">
+                                Made with 
+                                <i class="fa fa-heart"></i>
+                                by 
+                                <a target="_blank" href="http://bootstrapthemes.co">Erin Peng</a> 
+                                2020. All Rights Reserved
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+            <!-- JS includes -->
+
+            <script src="assets/js/vendor/jquery-1.11.2.min.js"></script>
+            <script src="assets/js/vendor/bootstrap.min.js"></script>
+
+            <script src="assets/js/jquery.magnific-popup.js"></script>
+            <script src="assets/js/jquery.easing.1.3.js"></script>
+            <script src="assets/js/slick.min.js"></script>
+            <script src="assets/js/jquery.collapse.js"></script>
+            <script src="assets/js/bootsnav.js"></script>
+
+
+            <script src="assets/js/plugins.js"></script>
+            <script src="assets/js/main.js"></script>
+
+            <!-- paradise slider js -->
+
+            <script src="js/planning.js"></script>
+            <script src="js/filter.js"></script>
+            <script async defer src=
+                "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyBnr8RhoIjlRKQ7iTT8yM7IfQJpv64znyg&v=3&callback=initMap">
+            </script>
+
+    </body>
+</html>
