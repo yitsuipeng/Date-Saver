@@ -177,12 +177,16 @@ router.post('/signin', async (req, res) => {
     }
 });
 
-router.get('/profile', verifyToken, (req, res) => {
+// profile
+router.get('/profile', verifyToken, async(req, res) => {
 
-    res.status(200).send({ data: req.token});
-
-    const sql = `SELECT * FROM user WHERE access_token = '${req.token}';`;
+    const sql = `SELECT * FROM orders WHERE user_id = '${req.token.id}';`;
     const condition = null;
+
+    let orderResult = await queryPool(sql, condition);
+    res.status(200).send({ data: {user:req.token, oders:orderResult}});
+
+
 
     // // query in sql
     // queryPool(sql, condition)

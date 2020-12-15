@@ -1,0 +1,20 @@
+.user_picture_border{
+    background-color: #ff6863;
+    padding: 10px;
+    border-radius: 50%;
+    margin: 0 auto;
+    width: 150px;
+    height: 150px;
+    /* position: absolute;
+    top: 13%;
+    left: 25%;
+    right: 25%; */
+}
+.user_picture_border .user_picture{
+    /* background-color: #ff6863; */
+    border: 2px solid;
+    border-color: #fff;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+}
