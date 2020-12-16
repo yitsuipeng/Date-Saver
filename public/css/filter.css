@@ -30,6 +30,24 @@
   background-color: lightpink;
 }
 
+/* 輸入框可以漂亮 */
+.main_subscribe .subscribe_btns .form-group #name{
+  width:100%;
+  background-color: transparent;
+  color:#fff;
+}
+.main_subscribe .subscribe_btns .form-group #date{
+  width:100%;
+  background-color: transparent;
+  color:#fff;
+}
+.main_subscribe .subscribe_btns .form-group #places-input{
+  width:60%;
+  background-color: transparent;
+  color:#fff;
+}
+
+
 
 
 /* The Modal (background) */

@@ -6,8 +6,6 @@ const axios = require('axios');
 const { db,queryPool,intoSql } = require('./db');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { upload } = require('./util');
-
 
 // clean the Bearer token
 function verifyToken (req, res, next) {
@@ -182,13 +180,34 @@ router.post('/signin', async (req, res) => {
 // profile
 router.get('/profile', verifyToken, async(req, res) => {
 
-    let sql = `SELECT * FROM orders WHERE user_id = '${req.token.id}';`;
-    let condition = null;
+    const sql = `SELECT * FROM orders WHERE user_id = '${req.token.id}';`;
+    const condition = null;
 
     let orderResult = await queryPool(sql, condition);
-    console.log(orderResult);
     res.status(200).send({ data: {user:req.token, order:orderResult}});
 
+
+
+    // // query in sql
+    // queryPool(sql, condition)
+    //     .then(result => {
+    //         if (result.length > 0) { // token match
+    //             console.log(result[0]);
+    //             res.json(
+    //                 {
+    //                     data: {
+    //                         id: result[0].id,
+    //                         provider: result[0].provider,
+    //                         name: result[0].name,
+    //                         email: result[0].email,
+    //                         picture: result[0].picture
+    //                     }
+    //                 });
+    //         } else { // no match token
+    //             console.log('no match token');
+    //             res.status(403).send('Invalid Access Token');
+    //         }
+    //     });
 });
 
 // planning
@@ -207,7 +226,6 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
         total_duration: req.body.plan.totalTime,
         total_distance: req.body.plan.totalDistance,
         date: req.body.plan.startDate,
-        name: req.body.plan.name
     };
 
     let insertResult = await queryPool('INSERT INTO orders SET ?', orderInfo);
@@ -220,21 +238,6 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
     } else {
         res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
     }
-
-});
-
-// update order image
-router.post('/uploadShares', upload.single('main_image'), async (req, res) => {
-
-    let sql = `UPDATE orders SET ? WHERE id=${req.body.order_id}`;
-    let condition = {
-        photo: req.file.originalname,
-        comment: req.body.story
-    };
-
-    let orderResult = await queryPool(sql, condition);
-
-    res.redirect();
 
 });
 

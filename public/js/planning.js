@@ -307,6 +307,7 @@ async function initMap() {
 
     document.getElementById('schedule').addEventListener('click', (e) => {
       let pin = e.target;
+      plan.schedule = [];
 
       showListings(optionMarkers);
 
@@ -333,6 +334,10 @@ async function initMap() {
             scheduleInput.push(options[x.title]);
         }
 
+        if(scheduleInput.length>9){
+          alert('行程好像有點多，要不要刪掉一些呢?');
+        }else{
+
         await fetch('api/1.0/optimization', {
                 method: 'POST',
                 headers: new Headers({
@@ -349,6 +354,7 @@ async function initMap() {
                 refreshSchedule(response,document.getElementById('schedule'));
 
             });
+        }
     });
 
     document.getElementById('make-schedule').addEventListener('click', async() => {
@@ -392,6 +398,7 @@ async function initMap() {
       } else if(plan.totalTime ==0 || plan.totalDistance==0) {
         alert('請先匯出路徑才能儲存旅程喔!');
       } else {
+
         plan.startDate = document.getElementById('date').value;
         plan.name = document.getElementById('name').value;
         document.getElementById("plan-name").innerHTML = plan.name;
@@ -403,6 +410,8 @@ async function initMap() {
           document.getElementById("plan-details").innerHTML += `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[i].name}</li><li>${plan.schedule[i].address}</li></ul>`;
         }
         document.getElementById("myModal").style.display = "block";
+        
+        console.log(plan);
       }
     });
 
@@ -436,8 +445,9 @@ async function initMap() {
             if(result.data){
               alert(result.data);
               window.location.replace("profile.html");
-            } else {
-              alert(result.error);
+            } else{
+              alert('請重新登入後再試，謝謝!');
+              window.location.replace("profile.html");
             }
         })
         .catch(error => {
@@ -548,15 +558,10 @@ async function calculateAndDisplayRoute(scheduleArrey) {
 
             let legs = result.routes[0].legs[0];
 
-            scheduleArrey[i+1].duraion = legs.duration;
+            scheduleArrey[i+1].duration = legs.duration;
             scheduleArrey[i+1].distance = legs.distance;
 
             let steps = result.routes[0].legs[0].steps;
-            let stepContent = "";
-            steps.forEach((e, i) => {
-              stepContent += e.instructions+'<br>';
-            });
-            scheduleArrey[i+1].details = stepContent;
 
             plan.totalTime += legs.duration.value;
             plan.totalDistance += legs.distance.value;
