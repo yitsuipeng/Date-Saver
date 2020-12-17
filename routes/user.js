@@ -228,13 +228,13 @@ router.post('/uploadShares', upload.single('main_image'), async (req, res) => {
 
     let sql = `UPDATE orders SET ? WHERE id=${req.body.order_id}`;
     let condition = {
-        photo: req.file.originalname,
+        photo: req.file.key.replace("date-saver/shares/",""),
         comment: req.body.story
     };
 
     let orderResult = await queryPool(sql, condition);
 
-    res.redirect();
+    res.redirect('/profile.html');
 
 });
 

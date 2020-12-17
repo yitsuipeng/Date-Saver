@@ -22,7 +22,7 @@ const upload = multer({
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
-            let path = `date-saver/shares/${file.originalname}`;
+            let path = `date-saver/shares/${Date.now()}-${file.originalname}`;
             cb(null, path);
         }
     })

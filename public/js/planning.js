@@ -164,7 +164,7 @@ async function initMap() {
         plan.startPoint.rating = place.rating;
         plan.startPoint.location = {lat:place.geometry.location.lat(),lng:place.geometry.location.lng()};
         plan.startPoint.address = place.formatted_address;
-        plan.startPoint.types = JSON.stringify(place.types);
+        // plan.startPoint.types = JSON.stringify(place.types);
         plan.startPoint.place_id = place.place_id;
           
       }
@@ -462,14 +462,15 @@ async function initMap() {
 
 //標點工具
 function showListings(markers) {
-  var bounds = new google.maps.LatLngBounds();
+  // var bounds = new google.maps.LatLngBounds();
   // Extend the boundaries of the map for each marker and display the marker
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
     bounds.extend(markers[i].position);
     markers[i].setAnimation(null);
   }
-  map.fitBounds(bounds);
+  map.setZoom(13);
+  // map.fitBounds(bounds);
   console.log(markers);
 
 }
@@ -666,14 +667,14 @@ function getPlacesDetails(placeId) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
 
       const value = {
-        id : results.place_id,
+        place_id : results.place_id,
         name : results.name,
         location : results.geometry.location,
         rating : results.rating,
         address : results.formatted_address,
         photo : results.photos[0].getUrl(),
         url : results.url,
-        types : JSON.stringify(results.types)
+        // types : JSON.stringify(results.types)
       };
       selfChosen[results.name] = value;
 
