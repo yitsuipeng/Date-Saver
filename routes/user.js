@@ -211,6 +211,31 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
     };
 
     let insertResult = await queryPool('INSERT INTO orders SET ?', orderInfo);
+    let places = await queryPool('SELECT place_id FROM places', null);
+
+    for(let x of req.body.plan.schedule){
+        let same = 0;
+        for(let y of places){
+            if(x.place_id == y.place_id){
+                same = 1;
+            }
+        }
+        if (same==0){
+            let newSiteDetails = {
+                url: x.url,
+                place_id: x.place_id,
+                lat: x.location.lat,
+                lng: x.location.lng,
+                address: x.address,
+                name: x.name,
+                rating: x.rating
+            }
+
+            let newSite = await queryPool('INSERT INTO places SET ?', newSiteDetails);
+            console.log(newSite);
+        }
+    }
+
 
     if (insertResult) {
         console.log('succeed');
@@ -220,6 +245,9 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
     } else {
         res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
     }
+
+    await collaborativeFiltering();
+
 
 });
 
@@ -237,5 +265,79 @@ router.post('/uploadShares', upload.single('main_image'), async (req, res) => {
     res.redirect('/profile.html');
 
 });
+
+// hot
+router.get('/getHotOrders', upload.single('main_image'), async (req, res) => {
+
+    let sql = `SELECT * FROM orders WHERE comment IS NOT NULL;`;
+    let condition = null;
+
+    let orderResult = await queryPool(sql, condition);
+    res.status(200).send({ data: orderResult});
+
+
+});
+
+
+async function collaborativeFiltering(){
+    let sql = `SELECT details FROM orders;`;
+    let orderHistory = await queryPool(sql, null);
+    let newArray = [];
+    let ordersList = orderHistory.flatMap(p => JSON.parse(p.details)).map(x => x.place_id);
+    
+    for(let x of orderHistory){
+        x = JSON.parse(x.details);
+        let z = x.map(y => y.place_id);
+        newArray.push(z);
+    }
+
+    console.log(ordersList.length);
+    let index = {};
+
+    for(let i=0; i<ordersList.length; i++){
+        if(!index[ordersList[i]]){
+            index[ordersList[i]] = 0;
+        }
+        index[ordersList[i]] += 1;
+    }
+
+    let n = Object.keys(index);
+    console.log(n.length);
+
+    let simArray = [];
+    for(let i of n) {
+        for(let j of n){
+            let first = [i,j];
+            simArray.push(first);
+        }   
+    }
+    console.log(simArray.length);
+
+    for(let x of simArray){
+        if(x[0]==x[1]){
+            x.push(1);
+        }else{
+            let child = 0;
+            for(let y of newArray){
+                let count = 0;
+                for(let z of y){
+                    if(z==x[0] || z==x[1]){
+                        count += 1;
+                    }
+                }
+                if(count==2){
+                    child += 1;
+                }
+            }
+            x.push(child/(index[x[0]]+index[x[1]]-child));
+        }
+    }
+    console.log(simArray);
+
+    let clearIndex = await queryPool('DELETE FROM cf_index',null);
+    let refreshIndex = await queryPool('INSERT INTO cf_index (first, second, sim) VALUES ?',[simArray]);
+    console.log(refreshIndex.affectedRows);
+    
+}
 
 module.exports = router;

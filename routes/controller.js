@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const _ = require('lodash');
 const { db,queryPool,intoSql } = require('./db');
 const { encodeXText } = require('nodemailer/lib/shared');
 
@@ -63,7 +64,7 @@ router.get('/getNearOption/:location', async (req, res) => {
     //    }
     // });
 
-    let near = `SELECT name, lat, lng, place_id, url, photo, address, place_key FROM places;`;
+    let near = `SELECT name, lat, lng, place_id, url, photo, address, place_key FROM places WHERE place_key IS NOT NULL;`;
     let nearResult = await queryPool(near,null);
     // await nearResult.sort((a, b) => {
     //     return (Math.pow(a.lat*10000-lat, 2) + Math.pow(a.lng*10000-lng, 2)) - (Math.pow(b.lat*10000-lat, 2) + Math.pow(b.lng*10000-lng, 2));
@@ -99,7 +100,7 @@ router.post('/optimization', async (req, res) => {
     }
     console.log(matrixDistance);
 
-    let index = [];
+    let index = []; // [0,1,2,3,4]
     for (let x in req.body) {
         index.push(parseInt(x));
     }
@@ -201,6 +202,30 @@ router.post('/googleApiGetId', async (req, res) => {
 });
 
 
+router.get('/recommendation/:id', async (req, res) => {
+
+    let name = req.params.id;
+    console.log(name);
+    
+    let sql = `SELECT * FROM cf_index INNER JOIN places ON cf_index.second = places.place_id where first = '${req.params.id}' AND sim != 0 ;`;
+    let simQuery = await queryPool(sql, null);
+
+
+    if(simQuery.length==0){
+        res.status(200).send({sorry:"no recommend"});
+    }else{
+        simQuery.sort((a, b) => {
+            return (b.sim - a.sim);
+        });
+        let simResult = simQuery.filter(x => x.first != x.second ).slice(0, 3);
+        console.log(simResult);
+        
+        res.status(200).send({ data: simResult });
+    } 
+    
+});
+
+
 function getDistance(lat1, lng1, lat2, lng2) {
     var radLat1 = lat1 * Math.PI / 180.0;
     var radLat2 = lat2 * Math.PI / 180.0;
@@ -238,6 +263,5 @@ function permutateWithoutRepetitions(permutationOptions) {
   
     return permutations;
 }
-  
 
 module.exports = router;

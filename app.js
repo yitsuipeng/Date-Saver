@@ -19,7 +19,7 @@ app.set('json spaces', 2);
 //connect to other js files
 app.use('/api/1.0', require('./routes/controller'));
 app.use('/user', require('./routes/user'));
-app.use('/order', require('./routes/order'));
+
 
 // Page not found
 app.use(function (req, res, next) {

@@ -40,6 +40,7 @@
         "greenlock-express": "^2.7.18",
         "jsonwebtoken": "^8.5.1",
         "jssha": "^3.1.2",
+        "lodash": "^4.17.20",
         "mocha": "^7.1.0",
         "multer": "^1.4.2",
         "multer-s3": "^2.9.0",

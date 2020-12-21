@@ -90,3 +90,10 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+
+/*set_center*/
+.set_center{
+  align-items: center;
+}
+

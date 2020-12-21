@@ -11,8 +11,8 @@ const host = 'd2cw5pt7i47jz6.cloudfront.net';
 const token = window.localStorage.getItem('Authorization');
 
 let plan = {
-    schedule: [],
     startPoint: {},
+    schedule: [],
     startDate: 0,
     totalTime:0,
     totalDistance:0,
@@ -158,7 +158,8 @@ async function initMap() {
       } else {
 
         console.log(place);
-  
+
+        plan.startPoint = {};
         plan.startPoint.url = place.url,
         plan.startPoint.name = place.name;
         plan.startPoint.rating = place.rating;
@@ -176,18 +177,13 @@ async function initMap() {
         //清空
         hideMarkers(placeMarkers);
         hideMarkers(optionMarkers);
-        hideMarkers(markers);
-        markers = [];
         optionMarkers = [];
         placeMarkers = [];
         routeMarkers = [];
         interview = [];
-        selfChosen = {};
         options = {};
-        document.getElementById('schedule').innerHTML = "";
 
-
-        options[plan.startPoint.name] = plan.startPoint;  //到列印再存
+        selfChosen[plan.startPoint.name] = plan.startPoint;  //到列印再存
         marker = new google.maps.Marker({
             position: plan.startPoint.location,
             map: map,
@@ -245,7 +241,7 @@ async function initMap() {
     
             }
             let optionArray = Object.keys(options);
-            optionArray.shift();
+            // optionArray.shift();
             createOptions(optionArray,document.getElementById('near-option'),null)
             showListings(optionMarkers);
             console.log(options);
@@ -256,7 +252,8 @@ async function initMap() {
             return error;
         });
 
-        addSchedule(document.getElementById('schedule'),plan.startPoint);
+        document.getElementById("recommend-site").innerHTML = "";
+        addSchedule(document.getElementById('schedule'),plan.startPoint.name);
         map.setCenter(plan.startPoint.location);
         filterSelection("all");
         
@@ -290,8 +287,8 @@ async function initMap() {
               draggable: false, // true、false可否拖拉
               title: pin.parentNode.title,
           });
-          if(team == selfChosen){
-            options[pin.parentNode.title] = selfChosen[pin.parentNode.title];
+          if(team == options){
+            selfChosen[pin.parentNode.title] = options[pin.parentNode.title];
           }
       
           markers.push(newMarker);
@@ -299,6 +296,9 @@ async function initMap() {
           hideMarkers(placeMarkers);
           showListings(optionMarkers);
           showListings(markers);
+          console.log(selfChosen);
+
+          getRecommender(selfChosen[pin.parentNode.title].place_id);
           
       } else if(pin.className == 'drag-drop-item list-group-item'){
       }
@@ -331,7 +331,7 @@ async function initMap() {
         console.log(scheduleArrey.children);
         let scheduleInput = [];
         for(let x of scheduleArrey.children){
-            scheduleInput.push(options[x.title]);
+            scheduleInput.push(selfChosen[x.title]);
         }
 
         if(scheduleInput.length>9){
@@ -363,7 +363,7 @@ async function initMap() {
         removeRoutes();
         
         for(let x of scheduleArrey.children){
-            scheduleInput.push(options[x.title]);
+            scheduleInput.push(selfChosen[x.title]);
         }
 
         if(scheduleInput.length<3){
@@ -466,7 +466,7 @@ function showListings(markers) {
   // Extend the boundaries of the map for each marker and display the marker
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
-    bounds.extend(markers[i].position);
+    // bounds.extend(markers[i].position);
     markers[i].setAnimation(null);
   }
   map.setZoom(13);
@@ -583,7 +583,7 @@ async function calculateAndDisplayRoute(scheduleArrey) {
 
 // 搜尋工具
 function textSearchPlaces() {
-  if(!plan.startPoint.location){
+  if(!markers[0].position){
     alert('請選旅程起點喔');
   }else if(!document.getElementById('places-self-input').value){
     alert('請輸入搜尋關鍵字');
@@ -595,7 +595,7 @@ function textSearchPlaces() {
     placesService.nearbySearch({
       keyword: document.getElementById('places-self-input').value,
       // bounds: bounds
-      location: plan.startPoint.location,
+      location: markers[markers.length-1].position,
       radius:5000
     }, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -697,22 +697,14 @@ function createOptions(array,parentNode,title) {
         inner += `<div class='filterDiv ${options[x].place_key} ' title='${x}'>${x}
         </div>`;
 
-        // inner += `<div class='drag-drop-item list-group-item' title='${x}'>${x.replace('_',' ')}
-        // </div>`;
-
-        // let obj = document.createElement('div');
-        // obj.setAttribute("value",x.site);  // site name
-        // obj.innerText = x.site + x.startTime;
-        // schedule.appendChild(obj);
-
     }
     parentNode.innerHTML = inner;
 
 }
 
-function addSchedule(parentNode,nameObject) {
+function addSchedule(parentNode,title) {
     
-    parentNode.innerHTML += `<div class='drag-drop-item list-group-item' title='${nameObject.name}'>${nameObject.name}
+    parentNode.innerHTML += `<div class='drag-drop-item list-group-item' title='${title}'>${title}
       <img class="minus" src="https://${host}/date-saver/icons/minus.png">
     </div>`;
 
@@ -746,5 +738,74 @@ function createBigCard(pin) {
   <br><a href='${pin.url}' target="_blank" >在 Google 地圖上查看</a>
   <br><img src="https://${host}/date-saver/photos/${pin.photo}">
   </div>`;
+
+}
+
+function getRecommender(placeId){
+  console.log(placeId);
+
+  fetch(`api/1.0/recommendation/${placeId}`, {
+    method: 'GET',
+    headers: new Headers({
+    'Content-Type': 'application/json'
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if(!res.data){
+      console.log(res);
+      document.getElementById("recommend-site").innerHTML = "";
+
+    }else{
+      console.log("recommend site:" +res.data.length);
+
+      let testimonial = [];
+      document.getElementById("recommend-site").innerHTML = "";
+
+      for(let x of res.data){
+    
+        let location = {lat:x.lat,lng:x.lng};
+        options[x.name] = {
+          name: x.name,
+          location: location,
+          place_id: x.place_id,
+          photo: x.photo,
+          url: x.url,
+          place_key: x.place_key,
+          address: x.address
+        };
+        testimonial.push(x.name);
+  
+      }
+
+      for(let x of testimonial){
+
+        document.getElementById("recommend-site").innerHTML += 
+
+        `<div class="col-md-4">
+          <div class="about_bottom_item m-top-20">
+              <div class="ab_head">
+                  <div class="ab_head_icon">
+                      <i class="icofont icofont-heart"></i>
+                  </div>
+                  <h6 class="m-top-20">${x}</h6>
+              </div>
+          </div>
+        </div>`;
+        
+      }
+
+    // let optionArray = Object.keys(options);
+    // optionArray.shift();
+    // createOptions(optionArray,document.getElementById('near-option'),null)
+    // showListings(optionMarkers);
+    // console.log(options);
+    }
+
+
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 
 }

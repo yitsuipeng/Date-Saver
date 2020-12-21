@@ -91,16 +91,15 @@
                     <div class="collapse navbar-collapse" id="navbar-menu">
                         <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
                             <li><a href="planning.html">開始旅程</a></li>                    
-                            <li><a href="#about">熱門旅程</a></li>                    
-                            <li><a href="profile.html">我的約會</a></li>                    
-                            <li><a href="sign.html">登入</a></li>                   
+                            <li><a href="hot.html">熱門旅程</a></li>                    
+                            <li><a href="profile.html">我的約會</a></li>                 
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </div>  
             </nav>
 
             <!--Subscribe section 選項攔-->
-            <section id="subscribe" class="subscribe roomy-30 fix p-top-40">
+            <section id="subscribe" class="subscribe roomy-30 fix p-top-60">
                 <div class="overlay"></div>
                 <div class="container">
                     <div class="row">
@@ -152,12 +151,9 @@
                         <button class="btn" onclick="filterSelection('art')">來點文藝</button>
                         <button class="btn" onclick="filterSelection('fun')">來點有趣</button>
                         <button class="btn" onclick="filterSelection('park')">來點散步 </button>
-                        <button class="btn" onclick="filterSelection('history')">來點復古</button>
-                        <button class="btn" onclick="filterSelection('hike')">來點踏青</button>
                         <button class="btn" onclick="filterSelection('shop')">來點逛街</button>
-                        <button class="btn" onclick="filterSelection('night')">來點夜生活</button>
                         <input id="places-self-input" type="text" placeholder="EX. 電影">
-                        <button id="search-places" class="btn" onclick="filterSelection('choice')">搜尋</button>
+                        <button id="search-places" class="btn" onclick="filterSelection('choice')">關鍵字搜尋</button>
                     </div>
                     <div id="near-option">
                         <!-- <div class="filterDiv cars">BMW</div>
@@ -195,143 +191,34 @@
                     </div><!--End off row-->
                 </div><!--End off container -->
                  <hr />
-                <br />
-                <br />
                 <div class="container">
                     <div class="row">
-                        <div class="about_bottom_content">
-                            <div class="col-md-4">
-                                <div class="about_bottom_item m-top-20">
-                                    <div class="ab_head">
-                                        <div class="ab_head_icon">
-                                            <i class="icofont icofont-fire-burn"></i>
-                                        </div>
-                                        <h6 class="m-top-20"> WE’RE CREATIVE</h6>
-                                    </div>
-                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
-                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
-                                        magna diam aliquafm erat voluitpati. </p>
+                        <div class="main_service roomy-50">
+                            <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                                <div class="text-center">
+                                    <h6>在這裡約會的人也去過...</h6>
+                                    <div class="separator_auto"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="about_bottom_item m-top-20">
-                                    <div class="ab_head">
-                                        <div class="ab_head_icon">
-                                            <i class="icofont icofont-speech-comments"></i>
+                            <div id="recommend-site" class="about_bottom_content set_center" style="text-align: center;">
+                                <!-- <div class="col-md-4">
+                                    <div class="about_bottom_item m-top-20">
+                                        <div class="ab_head">
+                                            <div class="ab_head_icon">
+                                                <i class="icofont icofont-heart"></i>
+                                            </div>
+                                            <h6 class="m-top-20">WE LOVE MINIMALISM</h6>
                                         </div>
-                                        <h6 class="m-top-20">WE'RE FRIENDLY</h6>
+                                        <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
+                                            sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
+                                            magna diam aliquafm erat voluitpati. </p>
                                     </div>
-                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
-                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
-                                        magna diam aliquafm erat voluitpati. </p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="about_bottom_item m-top-20">
-                                    <div class="ab_head">
-                                        <div class="ab_head_icon">
-                                            <i class="icofont icofont-heart"></i>
-                                        </div>
-                                        <h6 class="m-top-20">WE LOVE MINIMALISM</h6>
-                                    </div>
-                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
-                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
-                                        magna diam aliquafm erat voluitpati. </p>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
-                    </div><!--End off row-->
+                    </div><!--End off row -->
                 </div><!--End off container -->
             </section> <!--End off About section -->
-
-
-            <br>
-            <br>
-
-            <!--Testimonial Section-->
-            <section id="testimonial" class="testimonial fix">
-                <div class="overlay"></div>
-                <div class="container">
-                    <div class="row">
-                        <div class="main_testimonial roomy-100">
-                            <div class="head_title text-center">
-                                <h2 class="text-white">OUR TESTIMONIALS</h2>
-                            </div>
-                            <div class="testimonial_slid text-center">
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!--End off row-->
-                </div><!--End off container -->
-            </section> <!--End off Testimonial section -->
-
 
             <!-- The Modal -->
             <div id="myModal" class="modal col-md-4 text-center">
