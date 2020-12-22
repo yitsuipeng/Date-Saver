@@ -62,7 +62,7 @@ router.post('/signup', async (req, res) => {
                             picture: userInfo.picture
                         };
 
-            let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '60 s', noTimestamp:true });
+            let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
 
             res.status(200).send( {data: { access_token: token }});
 
@@ -93,7 +93,7 @@ router.post('/signin', async (req, res) => {
                     picture: checkExist[0].picture
                 };
 
-                let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '60 s', noTimestamp:true });
+                let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
 
                 res.status(200).send( { data: { access_token: token , username: checkExist[0].name}});
 
@@ -143,7 +143,7 @@ router.post('/signin', async (req, res) => {
                             picture: result[0].picture
                         };
         
-                        let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '60 s', noTimestamp:true });
+                        let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
         
                         console.log('facebook sign in');
                         res.status(200).send( { data: { access_token: token, username: result[0].name}});
