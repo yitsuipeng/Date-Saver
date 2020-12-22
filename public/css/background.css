@@ -1,0 +1,29 @@
+.sign-back{
+    background:url(https://d2cw5pt7i47jz6.cloudfront.net/date-saver/icons/marry.jpg) no-repeat center center;
+    background-size: cover;
+    position: relative;
+    padding-top: 10%;
+    padding-bottom: 10%;
+
+}
+
+.home-back{
+
+    background: url(https://d2cw5pt7i47jz6.cloudfront.net/date-saver/icons/visual.jpg) no-repeat bottom center;
+    background-size: cover;
+    position: relative;
+
+}
+
+@media (min-width: 1500px) {
+	.sign-back{
+        background-size: cover;
+        position: relative;
+        padding-top: 15%;
+        padding-bottom: 15%;
+    
+    }
+}
+
+
+

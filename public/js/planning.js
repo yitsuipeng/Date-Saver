@@ -279,7 +279,7 @@ async function initMap() {
 
       if(pin.className == 'plus'){
           let team = options[pin.parentNode.title]? options : selfChosen;
-          addSchedule(document.getElementById('schedule'),team[pin.parentNode.title]);
+          addSchedule(document.getElementById('schedule'),pin.parentNode.title);
           let newMarker = new google.maps.Marker({
               position: team[pin.parentNode.title].location,
               map: map,

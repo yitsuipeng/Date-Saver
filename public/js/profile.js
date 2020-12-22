@@ -14,33 +14,47 @@ if(token){
     })
     .then(res => res.json()) //這裡要改成噴不同訊息要跳轉畫面  跟拿到payload要印在版面上
     .then(result => {
-        console.log(result.data);
-        data = result.data;
-        let shares = 0;
-        let photoUrl = data.user.picture? data.user.picture : `https://${host}/date-saver/users/unnamed.jpg`;
-        
-        for(let x of data.order){
-            orders[x.id] = x
-            if(x.comment != null){
-                shares += 1;
+        if(result.data.user){
+            console.log(result.data);
+            data = result.data;
+            let shares = 0;
+            let views = 0;
+            let photoUrl = data.user.picture? data.user.picture : `https://${host}/date-saver/users/unnamed.jpg`;
+            
+            for(let x of data.order){
+                orders[x.id] = x
+                if(x.comment != null){
+                    shares += 1;
+                }
+                views += x.view;
             }
+    
+            document.getElementById('user-picture').style.backgroundImage = `url(${photoUrl})`;
+            document.getElementById('user-name').innerHTML = data.user.name;
+            document.getElementById('user-email').innerHTML = 'email: '+data.user.email;
+            document.getElementById('order-count').innerHTML = data.order.length;
+            document.getElementById('post-count').innerHTML = shares;
+            document.getElementById('view-count').innerHTML = views;
+            
+    
+            showCalendar(data.order);
+    
+            // let picture = document.createElement('img');
+            // picture.setAttribute('src',data.data.user.picture);
+            // document.getElementById('user-picture').appendChild(picture);
+
+        }else{
+            alert(result.data);
+            window.localStorage.removeItem('Authorization');
+            window.location.replace("sign.html");
         }
 
-        document.getElementById('user-picture').style.backgroundImage = `url(${photoUrl})`;
-        document.getElementById('user-name').innerHTML = data.user.name;
-        document.getElementById('user-email').innerHTML = 'email: '+data.user.email;
-        document.getElementById('order-count').innerHTML = data.order.length;
-        document.getElementById('post-count').innerHTML = shares;
-
-        showCalendar(data.order);
-
-        // let picture = document.createElement('img');
-        // picture.setAttribute('src',data.data.user.picture);
-        // document.getElementById('user-picture').appendChild(picture);
     })
     .catch(error => {
-        console.error('Error:', error);
-        return error;
+        console.log(error);
+        alert(error);
+        // window.localStorage.removeItem('Authorization');
+        // window.location.replace("sign.html");
     })
 
 }
@@ -81,11 +95,11 @@ function showOrderDetails(target){
 
     let details = JSON.parse(orders[target].details);
 
-    document.getElementById('details').innerHTML = `<h6 class="m-top-20">${details[0].name}</h6>`;
+    document.getElementById('details').innerHTML = `<h6 class="m-top-20">${details[0].name}</h6><p>${details[0].address}</p>`;
     document.getElementById('order-id').setAttribute("value",orders[target].id);
 
     for(let i=1 ; i<details.length ; i++){
-        let content = `<h6 class="m-top-20">${details[i].name}</h6><p>${details[i].distance.text} / ${details[i].duration.text} / ${details[i].address}</p>`;
+        let content = `<h6 class="m-top-20">${details[i].name}</h6><p>${details[i].address} / ${details[i].distance.text} / ${details[i].duration.text}</p>`;
         document.getElementById('details').innerHTML += content;
     }
 

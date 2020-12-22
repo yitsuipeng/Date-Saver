@@ -11,7 +11,7 @@ if(token){
     })
     .then(res => res.json())
     .then(res => {
-    if(res.data){
+    if(res.data.access_token){
         window.location.replace("profile.html");
     }
     else{

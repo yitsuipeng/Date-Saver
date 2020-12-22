@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="assets/css/bootsnav.css">
 
         <link rel="stylesheet" href="css/filter.css">
+        <link rel="stylesheet" href="css/background.css">
 
         <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
 
@@ -81,8 +82,8 @@
                         </button>
                         <a class="navbar-brand" href="index.html">
 
-                            <img src="assets/images/logo2.png" class="logo logo-display m-top-10" alt="">
-                            <img src="assets/images/logo.jpg" class="logo logo-scrolled" alt="">
+                            <img src="assets/images/logo-trans.png" class="logo logo-display" alt="">
+                            <img src="assets/images/logo-trans.png" class="logo logo-scrolled" alt="">
                         </a>
                     </div>
                     <!-- End Header Navigation -->
@@ -99,20 +100,13 @@
             </nav>
             
             <!--Impress section-->
-            <section id="impress" class="impress roomy-100" style="height:400px">
+            <section id="impress" class="sign-back">
                 <div class="overlay"></div>
                 <div class="container">
                     <div class="row">
                         <div class="main_impress text-center">
                             <div class="col-sm-8 col-sm-offset-2">
-                                <div class="widget_head">
-                                    <h3 class="text-white">HELLO FRIEND</h3>
-                                </div> 
-                                <!-- <div class="widget_socail m-top-30">
-                                    <ul class="list-inline">
-                                        <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    </ul>
-                                </div> -->
+                                <h2 class="text-white text-uppercase">HELLO FRIEND</h2>
                             </div>
                         </div>
                     </div><!--End off row -->
@@ -130,12 +124,11 @@
                             <h3 class="text-white">登入 | 註冊</h3>
                             <div class="separator_small"></div>
                         </div>
-                        <p>facebook一鍵登入</p>
-
                         <div class="widget_socail m-top-30">
                             <ul class="list-inline">
-                                <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+                                <!-- <li><a href=""><i class="fa fa-facebook"></i></a></li> -->
+                                <!-- <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button> -->
+                                <div class="fb-login-button" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true" data-width="100px" scope="public_profile,email" onlogin="checkLoginState();"></div>
                             </ul>
                         </div>
                     </div>

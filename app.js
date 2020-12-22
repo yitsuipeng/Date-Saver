@@ -5,7 +5,6 @@ const jsSHA = require('jssha');
 const app = express();
 
 
-
 //use middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

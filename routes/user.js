@@ -19,7 +19,7 @@ function verifyToken (req, res, next) {
         jwt.verify(bearerToken, process.env.secretAccessKey, (err, data) => {
             if(err){
                 console.log(err);
-                res.status(403).send({ error: 'Forbidden'});
+                res.status(403).send({data:'登入過期，請重新登入'});
             } else {
                 console.log(data);
                 req.token = data;
@@ -27,7 +27,7 @@ function verifyToken (req, res, next) {
             }
         });
     } else {
-        res.status(400).send({ error: 'No access token'});
+        res.status(400).send({data:'請先登入喔'});
     }
 }
 
@@ -62,12 +62,12 @@ router.post('/signup', async (req, res) => {
                             picture: userInfo.picture
                         };
 
-            let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+            let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '60 s', noTimestamp:true });
 
             res.status(200).send( {data: { access_token: token }});
 
         } else {
-            res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
+            res.status(500).send({ data: '系統錯誤，請稍後重試一次'});
         }
     }
 
@@ -93,7 +93,7 @@ router.post('/signin', async (req, res) => {
                     picture: checkExist[0].picture
                 };
 
-                let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+                let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '60 s', noTimestamp:true });
 
                 res.status(200).send( { data: { access_token: token , username: checkExist[0].name}});
 
@@ -130,7 +130,7 @@ router.post('/signin', async (req, res) => {
                     return queryPool(sql, condition);
                 } else { // not authorized
                     console.log(result);
-                    return res.status(400).send({error: '授權失敗'});
+                    return res.status(400).send({data: '授權失敗'});
                 }
             })
             .then(result => {
@@ -143,13 +143,13 @@ router.post('/signin', async (req, res) => {
                             picture: result[0].picture
                         };
         
-                        let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+                        let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '60 s', noTimestamp:true });
         
                         console.log('facebook sign in');
                         res.status(200).send( { data: { access_token: token, username: result[0].name}});
                     } else {
                         console.log('email is native');
-                        return res.status(403).send({ error: '帳號已使用，請改為站內登入'});
+                        return res.status(403).send({ data: '帳號已使用，請改為站內登入'});
                     }
 
                 } else { // email not exist
@@ -168,7 +168,7 @@ router.post('/signin', async (req, res) => {
                         res.status(200).send( { data: { access_token: token }});
             
                     } else {
-                        res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
+                        res.status(500).send({ data: '系統錯誤，請稍後重試一次'});
                     }
                 }
             })
@@ -193,7 +193,7 @@ router.get('/profile', verifyToken, async(req, res) => {
 
 // planning
 router.get('/verifyUser', verifyToken, async (req, res) => {
-    res.status(200).send({ data: req.token});
+    res.status(200).send({ data: {access_token:req.token}});
 });
 
 router.post('/savePlanning', verifyToken, async (req, res) => {
@@ -207,7 +207,8 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
         total_duration: req.body.plan.totalTime,
         total_distance: req.body.plan.totalDistance,
         date: req.body.plan.startDate,
-        name: req.body.plan.name
+        name: req.body.plan.name,
+        view: 0
     };
 
     let insertResult = await queryPool('INSERT INTO orders SET ?', orderInfo);
@@ -248,6 +249,8 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
 
     await collaborativeFiltering();
 
+    res.send("save complete");
+
 
 });
 
@@ -275,6 +278,22 @@ router.get('/getHotOrders', upload.single('main_image'), async (req, res) => {
     let orderResult = await queryPool(sql, condition);
     res.status(200).send({ data: orderResult});
 
+
+});
+
+// hot
+router.post('/addView', async (req, res) => {
+
+    console.log(req.body);
+    let sql = `UPDATE orders SET ? WHERE id=${req.body.id}`;
+    let condition = {
+        view: req.body.view
+    };
+    
+    let simQuery = await queryPool(sql, condition);
+
+    console.log(simQuery);
+    res.send({"view update":req.body});
 
 });
 

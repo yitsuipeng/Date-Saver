@@ -73,6 +73,9 @@
   float: right;
   font-size: 28px;
   font-weight: bold;
+  position: absolute;
+  right: 5px;
+  top: 0;
 }
 
 .close:hover,
