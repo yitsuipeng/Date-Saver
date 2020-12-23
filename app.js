@@ -2,8 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const jsSHA = require('jssha');
+const socketView = require('./routes/socket');
 const app = express();
 
+
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
+
+io.on('connection', socketView);
 
 //use middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,6 +37,6 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Internal Server Error');
 });
 
-app.listen(3001, () => {
+http.listen(3001, () => {
     console.log('port: 3001');
 });

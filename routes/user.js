@@ -165,7 +165,7 @@ router.post('/signin', async (req, res) => {
                         let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
                         
                         console.log('facebook sign up');
-                        res.status(200).send( { data: { access_token: token }});
+                        res.status(200).send( { data: { access_token: token, username: userInfo.name }});
             
                     } else {
                         res.status(500).send({ data: '系統錯誤，請稍後重試一次'});

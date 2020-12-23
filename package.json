@@ -51,6 +51,7 @@
         "npm": "^6.14.1",
         "redis": "^3.0.2",
         "sinon": "^8.1.1",
+        "socket.io": "^3.0.4",
         "validator": "^13.0.0"
     },
     "devDependencies": {

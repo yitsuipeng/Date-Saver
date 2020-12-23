@@ -110,29 +110,6 @@ dragula([document.getElementById('schedule')], {
 
 async function initMap() {
 
-  fetch(`user/verifyUser`, {
-    method: 'GET',
-    headers: new Headers({
-      'Authorization': token
-    })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if(res.data){
-      console.log('enter success')
-    }
-    else{
-      console.log(res)
-      alert('請先登入喔');
-      window.location.replace("sign.html");
-    }
-  })
-  .catch(error => {
-      console.error('Error:', error);
-      alert('系統錯誤,請稍後再試');
-      return error;
-  });
-
     const searchAutocomplete = new google.maps.places.Autocomplete(
       document.getElementById('places-input'),{
         location: {lat:25.0591607,lng:121.5387777},
@@ -150,14 +127,12 @@ async function initMap() {
     searchAutocomplete.addListener('place_changed', () => {
     
       let place = searchAutocomplete.getPlace();
+      console.log(place);
+
       if (!place.geometry) {
   
-          alert('沒有相符的地點喔 請更改' + place.name);
-      } else if (place.formatted_address.indexOf("北市")<0) {
-          alert('只限大台北地區喔, 謝謝~~');       
-      } else {
-
-        console.log(place);
+        alert('沒有相符的地點喔 請更改' + place.name);    
+      } else if (place.formatted_address.indexOf("北市")>0 || place.formatted_address.indexOf("Taipei")>0) {    
 
         plan.startPoint = {};
         plan.startPoint.url = place.url,
@@ -168,7 +143,10 @@ async function initMap() {
         // plan.startPoint.types = JSON.stringify(place.types);
         plan.startPoint.place_id = place.place_id;
           
-      }
+      } else {
+        
+        alert('只限大台北地區喔, 謝謝~~');
+      }   
     });
 
     document.getElementById('start').addEventListener('click', async () => {
