@@ -38,7 +38,7 @@ router.post('/signup', async (req, res) => {
         name: req.body.name,
         email: req.body.email,
         password: hash.update(req.body.password).digest('hex'),
-        picture: 'https://d2cw5pt7i47jz6.cloudfront.net/date-saver/users/pug.jpg',
+        picture: 'https://d2cw5pt7i47jz6.cloudfront.net/date-saver/users/unnamed.jpg',
         provider: 'native',
     };
 
@@ -156,7 +156,7 @@ router.post('/signin', async (req, res) => {
                     let insertResult = queryPool('INSERT INTO users SET ?', userInfo);
                     if (insertResult) {
             
-                        let payload = { id: insertResult.insertId, 
+                        let payload = { id: insertResult[0].insertId, 
                                         name: userInfo.name, 
                                         email: userInfo.email, 
                                         picture: userInfo.picture
@@ -229,7 +229,8 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
                 lng: x.location.lng,
                 address: x.address,
                 name: x.name,
-                rating: x.rating
+                rating: x.rating,
+                icon: x.icon
             }
 
             let newSite = await queryPool('INSERT INTO places SET ?', newSiteDetails);

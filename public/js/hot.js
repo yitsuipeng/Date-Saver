@@ -87,6 +87,7 @@ let styles = [
       ]
     }
   ];
+let socket = io();
 
 async function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -111,15 +112,16 @@ fetch(`user/getHotOrders`, {
 
     for(let x of res.data){
 
-        blogs[x.name] = x;
+        blogs[x.id] = x;
         let content = `<div class="col-md-4 open-the-box">
             <div class="blog_item m-top-20">
-                <div class="blog_item_img" title="${x.name}">
+                <div class="blog_item_img" title="${x.id}">
                     <img class="imgimgimg" src="https://${host}/date-saver/shares/${x.photo}" alt="" />
                 </div>
                 <div class="blog_text roomy-40">
-                    <h6>${x.name}</h6>
-                    <p><em>${x.date} / ${JSON.parse(x.details)[0].name} / ${(x.total_distance/1000).toFixed(1)} 公里</em></p>
+                    <h6><strong>${x.name}</strong></h6>
+                    <p><em>${x.date} / ${JSON.parse(x.details)[0].name}</em></p>
+                    <p id="${x.id}">${x.view}次點閱</p>
                 </div>
             </div>
         </div>`;
@@ -134,7 +136,7 @@ fetch(`user/getHotOrders`, {
 
         if(pin.className == 'imgimgimg'){
 
-            document.getElementById("plan-name").innerText = pin.parentNode.title;
+            document.getElementById("plan-name").innerText = blogs[pin.parentNode.title].name;
             let pinArray = JSON.parse(blogs[pin.parentNode.title].details);
             document.getElementById("plan-comment").innerHTML = blogs[pin.parentNode.title].comment;
             document.getElementById("plan-details").innerHTML = `<ul><h6><i class="fa fa-check-circle text-primary"></i> ${pinArray[0].name}</h6><p>${pinArray[0].address}<p></ul>`;
@@ -145,7 +147,7 @@ fetch(`user/getHotOrders`, {
             let marker = new google.maps.Marker({
                 position: pinArray[0].location,
                 map: map,
-                title: pin.parentNode.title,
+                title: blogs[pin.parentNode.title].name,
                 label: "1"
             });
 
@@ -168,6 +170,8 @@ fetch(`user/getHotOrders`, {
             }
 
             addView(pin.parentNode.title);
+            blogs[pin.parentNode.title].view += 1;
+            document.getElementById(`${pin.parentNode.title}`).innerText = blogs[pin.parentNode.title].view+'次點閱';
             document.getElementById("myModal").style.display = "block";
         }
         
@@ -178,9 +182,9 @@ fetch(`user/getHotOrders`, {
     }
     
     window.onclick = function(event) {
-        if (event.target == document.getElementById("myModal")) {
-            document.getElementById("myModal").style.display = "none";
-        }
+      if (event.target == document.getElementById("myModal")) {
+          document.getElementById("myModal").style.display = "none";
+      }
     }
 
 })
@@ -206,29 +210,19 @@ function removeMarkers(markers) {
     }
 }
 
-function addView(name){
-    blogs[name].id
-    blogs[name].view += 1;
-    let newView = {id: blogs[name].id, view: blogs[name].view};
+function addView(id){
+  
+    let newView = {id: id, view: blogs[id].view};
     console.log(newView);
-  
-    fetch(`user/addView`, {
-      method: 'POST',
-      headers: new Headers({
-      'Content-Type': 'application/json'
-      }),
-      body:JSON.stringify(newView)
-    })
-    .then(res => res.json())
-    .then(res => {
-        console.log(res);
-  
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  
+    socket.emit('addView',newView);
+
 }
 
+socket.on('send', (msg)=>{
+  console.log(msg);
+  blogs[msg.id].view = msg.view;
+  document.getElementById(`${msg.id}`).innerText = blogs[msg.id].view+'次點閱';
+  
+});
 
 {/* <p><em>${x.date} / ${(x.total_distance/1000).toFixed(1)} 公里 / ${turnTimeText(x.total_duration)[0]}小時 ${turnTimeText(x.total_duration)[1]}分鐘 </em></p> */}

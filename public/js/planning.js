@@ -127,11 +127,15 @@ async function initMap() {
     searchAutocomplete.addListener('place_changed', () => {
     
       let place = searchAutocomplete.getPlace();
-      console.log(place);
 
       if (!place.geometry) {
-  
-        alert('沒有相符的地點喔 請更改' + place.name);    
+
+        Swal.fire({
+          title: '沒有相符的地點喔',
+          text: '請更改place.name',
+          icon: 'warning',
+        })
+    
       } else if (place.formatted_address.indexOf("北市")>0 || place.formatted_address.indexOf("Taipei")>0) {    
 
         plan.startPoint = {};
@@ -145,12 +149,23 @@ async function initMap() {
           
       } else {
         
-        alert('只限大台北地區喔, 謝謝~~');
+        Swal.fire({
+          title: '只限大台北地區喔',
+          text: '景點持續增加中，請見諒',
+          icon: 'warning',
+        })
+
       }   
     });
 
     document.getElementById('start').addEventListener('click', async () => {
-      if(plan.startPoint.name){
+      console.log();
+      if(!plan.startPoint.name){
+        Swal.fire({
+          title: '請選出發點',
+          icon: 'warning',
+        })
+      }else{
 
         //清空
         hideMarkers(placeMarkers);
@@ -220,7 +235,9 @@ async function initMap() {
             }
             let optionArray = Object.keys(options);
             // optionArray.shift();
-            createOptions(optionArray,document.getElementById('near-option'),null)
+            // createOptions(optionArray,document.getElementById('near-option'),null);
+            let sideOptionsArray = Object.values(options);
+            sideOptions(sideOptionsArray);
             showListings(optionMarkers);
             console.log(options);
     
@@ -233,20 +250,36 @@ async function initMap() {
         document.getElementById("recommend-site").innerHTML = "";
         addSchedule(document.getElementById('schedule'),plan.startPoint.name);
         map.setCenter(plan.startPoint.location);
-        filterSelection("all");
+        filterSelection("shop");
         
       }
     
     });
   
     // 監聽搜尋頁列出選項
-    document.getElementById('search-places').addEventListener('click', textSearchPlaces);
+    // document.getElementById('search-places').addEventListener('click', textSearchPlaces);
+
+    // 嘗試
+    document.getElementById('sidebar').addEventListener('click', (e) => {
+
+      if(e.target.localName == 'a'){
+        removeRoutes();
+        let pin = options[e.target.title];
+        showListings(optionMarkers);
+        bounceListings(map,optionMarkers,pin.name);
+        bounceListings(map,markers,pin.name);
+  
+        createBigCard(pin);
+      }
+
+    })
 
     document.getElementById('near-option').addEventListener('click', (e) => {
       removeRoutes();
       let pin = options[e.target.title];
       showListings(optionMarkers);
       bounceListings(map,optionMarkers,pin.name);
+      bounceListings(map,markers,pin.name);
 
       createBigCard(pin);
 
@@ -271,7 +304,7 @@ async function initMap() {
       
           markers.push(newMarker);
           pin.parentNode.remove();
-          hideMarkers(placeMarkers);
+          // hideMarkers(placeMarkers);
           showListings(optionMarkers);
           showListings(markers);
           console.log(selfChosen);
@@ -372,9 +405,15 @@ async function initMap() {
 
     document.getElementById('save-schedule').addEventListener('click', () => {
       if(!document.getElementById('date').value || !document.getElementById('name').value){
-        alert('請輸入約會日期跟旅程名稱喔!');
+        Swal.fire({
+          title: '請輸入約會日期跟旅程名稱喔!',
+          icon: 'warning',
+        });
       } else if(plan.totalTime ==0 || plan.totalDistance==0) {
-        alert('請先匯出路徑才能儲存旅程喔!');
+        Swal.fire({
+          title: '請先匯出路徑才能儲存旅程喔!',
+          icon: 'warning',
+        });
       } else {
 
         plan.startDate = document.getElementById('date').value;
@@ -559,7 +598,7 @@ async function calculateAndDisplayRoute(scheduleArrey) {
     
 }
 
-// 搜尋工具
+// 搜尋工具 先不用
 function textSearchPlaces() {
   if(!markers[0].position){
     alert('請選旅程起點喔');
@@ -652,6 +691,7 @@ function getPlacesDetails(placeId) {
         address : results.formatted_address,
         photo : results.photos[0].getUrl(),
         url : results.url,
+        icon: results.icon
         // types : JSON.stringify(results.types)
       };
       selfChosen[results.name] = value;
@@ -785,5 +825,17 @@ function getRecommender(placeId){
   .catch(error => {
     console.error('Error:', error);
   });
+
+}
+
+//測試生成側邊行程卡
+function sideOptions(sideOptionsArray) {
+    
+  for(let x of sideOptionsArray){
+
+    document.getElementById(`${x.place_key}`).innerHTML += `<a href="#" title="${x.name}">${x.name}</a>`;
+
+  }
+
 
 }

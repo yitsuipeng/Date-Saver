@@ -75,7 +75,7 @@ router.get('/getNearOption/:location', async (req, res) => {
 
     let suggest = {
         center:final,
-        nearSite: nearResult.slice(0,18),
+        nearSite: nearResult.slice(0,30),
     
     };
 

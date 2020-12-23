@@ -124,7 +124,7 @@ function statusChangeCallback(response) {  // Called with the results from FB.ge
         .then(res => res.json())
         .then(result => {
             if(result.data.access_token){
-                alert(`Hi ${result.data.username} , 歡迎回來!`);
+                alert(`Hi ${result.data.username} , welcome!`);
                 window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
                 window.location.replace("profile.html");
             }else{

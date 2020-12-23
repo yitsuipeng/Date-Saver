@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="css/filter.css">
 
         <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
         <!--For Plugins external css-->
@@ -104,27 +105,27 @@
                 <div class="container">
                     <div class="row">
                         <div class="main_subscribe text-center">
-                            <div class="col-sm-6 ">
-                                <div class="subscribe_btns m-top-20">
-                                    <form class="form-inline">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" id="places-input" placeholder="選一個旅程的起點">
-                                            <div id="start" type="submit" class="btn btn-primary">出發</div>
-                                        </div>
-                                    </form>
+                            <div class="col-sm-4 ">
+                                <div class="subscribe_btns">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="places-input" placeholder="輸入起點">
+                                        <button id="start" type="submit" class="btn btn-primary">出發</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <!-- <div class="col-sm-4">
                                 <div class="subscribe_btns m-top-20">
                                     <div class="form-group">
                                         <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-3 ">
-                                <div class="subscribe_btns m-top-20">
+                            </div> -->
+                            <div class="col-sm-8">
+                                <div class="subscribe_btns">
                                     <div class="form-group">
+                                        <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
                                         <input type="date" class="form-control date" id="date" placeholder="約會日期">
+                                        <button id="save-schedule" type="submit" class="btn btn-primary">儲存</button>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +138,42 @@
 
             <div class="container">
                 <div class="row">
-                    <div id="map" style="height:250px"></div>
+                    <div class="col-md-4">
+                        <div id="sidebar" class="sidenav">
+                            <button class="dropdown-btn">來點逛街
+                                <i class="fa fa-caret-down"></i>
+                              </button>
+                              <div class="dropdown-container" id="shop">
+                              </div>
+
+                            <button class="dropdown-btn">來點散步
+                            <i class="fa fa-caret-down"></i>
+                            </button>
+                            <div class="dropdown-container" id="park">
+                            </div>
+
+                            <button class="dropdown-btn">來點文藝
+                                <i class="fa fa-caret-down"></i>
+                              </button>
+                              <div class="dropdown-container" id="art">
+                              </div>
+
+                            <button class="dropdown-btn">來點有趣
+                              <i class="fa fa-caret-down"></i>
+                            </button>
+                            <div class="dropdown-container" id="fun">
+                            </div>
+
+                            <button class="dropdown-btn">來點電影
+                                <i class="fa fa-caret-down"></i>
+                              </button>
+                              <div class="dropdown-container" id="movie">
+                              </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div id="map" style="height:300px"></div>
+                    </div>
                 </div>
             </div>
 
@@ -147,13 +183,15 @@
                 <div class="container">
                     <hr>
                     <div id="myBtnContainer">
-                        <button class="btn active" onclick="filterSelection('all')">給我全部</button>
+                        <!-- <button class="btn active" onclick="filterSelection('all')">給我全部</button> -->
+                        <!-- <button class="btn active" onclick="filterSelection('shop')">來點逛街</button>
+                        <button class="btn" onclick="filterSelection('park')">來點散步 </button>
                         <button class="btn" onclick="filterSelection('art')">來點文藝</button>
                         <button class="btn" onclick="filterSelection('fun')">來點有趣</button>
-                        <button class="btn" onclick="filterSelection('park')">來點散步 </button>
-                        <button class="btn" onclick="filterSelection('shop')">來點逛街</button>
-                        <input id="places-self-input" type="text" placeholder="EX. 電影">
-                        <button id="search-places" class="btn" onclick="filterSelection('choice')">關鍵字搜尋</button>
+                        <button class="btn" onclick="filterSelection('movie')">來點電影</button> -->
+                        <!-- <button class="btn" onclick="filterSelection('movie')">來點逛街</button> -->
+                        <!-- <input id="places-self-input" type="text" placeholder="EX. 電影">
+                        <button id="search-places" class="btn" onclick="filterSelection('choice')">關鍵字搜尋</button> -->
                     </div>
                     <div id="near-option">
                         <!-- <div class="filterDiv cars">BMW</div>
@@ -171,7 +209,7 @@
                             <div class="col-md-6">
                                 <button id="optimize-schedule" type="submit" class="btn btn-primary">神啊給我最短路線</button>
                                 <button id="make-schedule" type="submit" class="btn btn-primary">匯出路徑</button>
-                                <button id="save-schedule" type="submit" class="btn btn-primary">儲存旅程</button>
+                                
                                 <hr>
                                 <div class="about_accordion wow fadeIn">
                                     <div id="schedule"></div>
