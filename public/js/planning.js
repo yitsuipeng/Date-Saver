@@ -131,9 +131,10 @@ async function initMap() {
       if (!place.geometry) {
 
         Swal.fire({
-          title: '沒有相符的地點喔',
-          text: '請更改place.name',
+          title: '哎呀',
+          text: '沒有相符的地點喔',
           icon: 'warning',
+          confirmButtonColor: '#ff6863',
         })
     
       } else if (place.formatted_address.indexOf("北市")>0 || place.formatted_address.indexOf("Taipei")>0) {    
@@ -150,9 +151,10 @@ async function initMap() {
       } else {
         
         Swal.fire({
-          title: '只限大台北地區喔',
-          text: '景點持續增加中，請見諒',
+          title: '哎呀',
+          text: '只限大台北地區喔，請見諒',
           icon: 'warning',
+          confirmButtonColor: '#ff6863',
         })
 
       }   
@@ -197,7 +199,7 @@ async function initMap() {
                 };
     
                 var icon = {
-                  url: `https://${host}/date-saver/icons/${x.place_key}.png`,
+                  url: `https://${host}/date-saver/icons/star.png`,
                   size: new google.maps.Size(35, 35),
                   origin: new google.maps.Point(0, 0),
                   anchor: new google.maps.Point(15, 34),
@@ -250,8 +252,10 @@ async function initMap() {
         
       }else{
         Swal.fire({
-          title: '請選出發點',
+          title: '哎呀',
+          text: '地點好像有誤喔，請修正一下',
           icon: 'warning',
+          confirmButtonColor: '#ff6863',
         })
       }
     
@@ -264,6 +268,10 @@ async function initMap() {
     document.getElementById('sidebar').addEventListener('click', (e) => {
 
       if(e.target.localName == 'a'){
+
+        document.getElementById("interesting-distance").innerHTML = "";
+        document.getElementById("interesting-time").innerHTML = "";
+        
         removeRoutes();
         let pin = options[e.target.title];
         showListings(optionMarkers);
@@ -275,7 +283,8 @@ async function initMap() {
 
     })
 
-    document.getElementById('near-option').addEventListener('click', (e) => {
+    document.getElementById('near-option').addEventListener('click', (e) => { //這個已經無效了
+
       removeRoutes();
       let pin = options[e.target.title];
       showListings(optionMarkers);
@@ -348,8 +357,10 @@ async function initMap() {
         
         if(scheduleInput.length>9){
           Swal.fire({
-            title: '行程好像有點多，要不要刪掉一些呢?',
+            title: '哎呀',
+            text: '行程好像有點多，要不要刪掉一些呢?',
             icon: 'warning',
+            confirmButtonColor: '#ff6863',
           })
         }else if(scheduleInput.length>1){
 
@@ -390,8 +401,10 @@ async function initMap() {
 
         if(scheduleInput.length<2){
           Swal.fire({
-            title: '約會好像太短了,再多加一些回憶吧!',
+            title: '哎呀',
+            text: '約會好像太短了,再多加一些回憶吧!',
             icon: 'warning',
+            confirmButtonColor: '#ff6863',
           })
         }else{
           rankMarkers(scheduleInput);
@@ -406,6 +419,12 @@ async function initMap() {
             return window.setTimeout(( () => {
               document.getElementById("interesting-distance").innerHTML = '移動距離: ' + (plan.totalDistance/1000).toFixed(1) +'公里';
               document.getElementById("interesting-time").innerHTML = '移動時間: ' + turnTimeText(plan.totalTime)[0] + '小時 '+turnTimeText(plan.totalTime)[1]+'分鐘';
+              document.getElementById('self-chosen-site').innerHTML = `<br><ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul><br>`;
+
+              for(let i=1 ; i<plan.schedule.length ; i++){
+                  let content = `<ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[i].name}</li><li> ${plan.schedule[i].address} </li><li> ${plan.schedule[i].mode} / ${plan.schedule[i].distance.text} / 約${plan.schedule[i].duration.text}</li></ul><br>`;
+                  document.getElementById('self-chosen-site').innerHTML += content;
+              }
 
             }), 1000);
           })
@@ -427,29 +446,21 @@ async function initMap() {
       if(!document.getElementById('date').value || !document.getElementById('name').value){
         Swal.fire({
           title: '哎呀',
-          text: '請輸入約會日期跟旅程名稱喔!',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        });
-      } else if(plan.totalTime ==0 || plan.totalDistance==0) {
-        Swal.fire({
-          title: '哎呀',
-          text: '請先匯出路徑才能儲存旅程喔!',
+          text: '請先匯出路徑再儲存喔!',
           icon: 'warning',
           confirmButtonColor: '#ff6863',
         });
       } else {
 
-        plan.startDate = document.getElementById('date').value;
-        plan.name = document.getElementById('name').value;
-        document.getElementById("plan-name").innerHTML = plan.name;
-        document.getElementById("plan-date").innerHTML = plan.startDate;
-        document.getElementById("plan-distance").innerHTML = (plan.totalDistance/1000).toFixed(1) +'km';
-        document.getElementById("plan-time").innerHTML = turnTimeText(plan.totalTime)[0] + 'hr '+turnTimeText(plan.totalTime)[1]+'min';
-        document.getElementById("plan-details").innerHTML = `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul>`;
-        for(let i=1; i<plan.schedule.length; i++){
-          document.getElementById("plan-details").innerHTML += `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[i].name}</li><li>${plan.schedule[i].address}</li></ul>`;
-        }
+        // document.getElementById("plan-name").innerHTML = plan.name;
+        // document.getElementById("plan-date").innerHTML = plan.startDate;
+        // document.getElementById("plan-distance").innerHTML = (plan.totalDistance/1000).toFixed(1) +'km';
+        // document.getElementById("plan-time").innerHTML = turnTimeText(plan.totalTime)[0] + 'hr '+turnTimeText(plan.totalTime)[1]+'min';
+        // document.getElementById("plan-details").innerHTML = `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul>`;
+
+        // for(let i=1; i<plan.schedule.length; i++){
+        //   document.getElementById("plan-details").innerHTML += `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[i].name}</li><li>${plan.schedule[i].address}</li></ul>`;
+        // }
         document.getElementById("myModal").style.display = "block";
         
         console.log(plan);
@@ -469,15 +480,21 @@ async function initMap() {
     document.getElementById('done').addEventListener('click', async() => {
       if(!document.getElementById('date').value || !document.getElementById('name').value){
         Swal.fire({
-          title: '請輸入約會日期跟旅程名稱喔!',
+          title: '哎呀',
+          text: '請輸入約會日期跟旅程名稱喔!',
           icon: 'warning',
+          confirmButtonColor: '#ff6863',
         })
       } else if(plan.totalTime ==0 || plan.totalDistance==0) {
         Swal.fire({
-          title: '請先匯出路徑才能儲存旅程喔!',
+          title: '哎呀',
+          text: '請先匯出路徑才能儲存旅程喔!',
           icon: 'warning',
+          confirmButtonColor: '#ff6863',
         })
       } else {
+        plan.startDate = document.getElementById('date').value;
+        plan.name = document.getElementById('name').value;
 
         fetch('user/savePlanning', {
           method: 'POST',
@@ -491,8 +508,10 @@ async function initMap() {
         .then(result => {
             if(result.data){
               Swal.fire({
-                title: '登入後才能儲存行程喔',
+                title: '哎呀',
+                text: '登入後才能儲存行程喔',
                 icon: 'warning',
+                confirmButtonColor: '#ff6863',
               });
             } else if(result.success){
               Swal.fire({
@@ -501,13 +520,17 @@ async function initMap() {
                 title: '儲存成功',
                 showConfirmButton: false,
                 timer: 1500
+              })
+              .then(()=>{
+                window.location.replace("profile.html");
               });
-              window.location.replace("profile.html");
+              
             } else {
               Swal.fire({
                 title: '哎呀',
                 text: '系統忙碌中，請稍後再試',
                 icon: 'warning',
+                confirmButtonColor: '#ff6863',
               });
             }
         })
@@ -596,19 +619,18 @@ async function calculateAndDisplayRoute(scheduleArrey) {
 
   // 繪製路線
   return new Promise((resolve, reject) => {
+
     let directionsService = new google.maps.DirectionsService();
-    let directionsRenderer = new google.maps.DirectionsRenderer({
-      map: map,
-      suppressMarkers: true,
-      panel: document.getElementById('self-chosen-site')
-    });
 
     for(let i=0; i<scheduleArrey.length-1; i++){
-      
+      let directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true,
+      });
 
       routeMarkers.push(directionsRenderer);
-      // let directionsService = new google.maps.DirectionsService();
-      // console.log(scheduleArrey[i].name);
+
+      console.log(scheduleArrey[i].name);
       var request = {
           origin: scheduleArrey[i].location,
           destination: scheduleArrey[i+1].location,
@@ -626,6 +648,7 @@ async function calculateAndDisplayRoute(scheduleArrey) {
 
           scheduleArrey[i+1].duration = legs.duration;
           scheduleArrey[i+1].distance = legs.distance;
+          scheduleArrey[i+1].mode = result.routes[0].fare? "公共運輸" : "步行";
 
           let steps = result.routes[0].legs[0].steps;
 
@@ -639,8 +662,9 @@ async function calculateAndDisplayRoute(scheduleArrey) {
         }
       });
     }
-
-    resolve(scheduleArrey);
+    if(scheduleArrey==scheduleArrey){resolve(scheduleArrey);}
+    else{reject(console.log("something wrong whis google api"))};
+    
 
   });
     
@@ -809,6 +833,10 @@ function createBigCard(pin) {
 
 function getRecommender(placeId){
   console.log(placeId);
+  let recommendMarker = new google.maps.Marker({
+    map: map,
+    animation: google.maps.Animation.BOUNCE, // DROP掉下來、BOUNCE一直彈跳
+  });
 
   fetch(`api/1.0/recommendation/${placeId}`, {
     method: 'GET',
@@ -849,25 +877,50 @@ function getRecommender(placeId){
         document.getElementById("recommend-site").innerHTML += 
 
         `<div class="about_bottom_item m-top-20">
-            <div class="ab_head">
-                <div class="ab_head_icon">
-                    <i class="icofont icofont-heart"></i>
+            <div class="abb_head">
+                <div class="front abb_head_icon">
+                  <i class="icofont icofont-heart"></i>
                 </div>
-                <h6 class="m-top-20">${x}</h6>
+                <div class="back abb_head_icon" title="${options[x].name}">
+                  <img class="abb_plus" src="http://${host}/date-saver/icons/plus.png">
+                </div>
+                <br>
+                <br><strong>${options[x].name}</strong>
+                <br>${options[x].address}
+                <br><a href='${options[x].url}' target="_blank" >在 Google 地圖上查看</a>
             </div>
           </div>`;
         
       }
 
+      document.getElementById("recommend-site").addEventListener('click', async(e) => {
 
+        let pin = e.target;
+        selfChosen[pin.parentNode.title] = options[pin.parentNode.title];
+        console.log(pin);
 
-    // let optionArray = Object.keys(options);
-    // optionArray.shift();
-    // createOptions(optionArray,document.getElementById('near-option'),null)
-    // showListings(optionMarkers);
-    // console.log(options);
+        if(pin.className == 'abb_plus'){
+
+            addSchedule(document.getElementById('schedule'),pin.parentNode.title);
+            let newMarker = new google.maps.Marker({
+                position: selfChosen[pin.parentNode.title].location,
+                map: map,
+                animation: google.maps.Animation.DROP, // DROP掉下來、BOUNCE一直彈跳
+                draggable: false, // true、false可否拖拉
+                title: pin.parentNode.title,
+            });
+        
+            markers.push(newMarker);
+            showListings(optionMarkers);
+            showListings(markers);
+            console.log(selfChosen);
+            
+        }
+
+  
+      });
+
     }
-
 
   })
   .catch(error => {

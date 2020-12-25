@@ -58,7 +58,7 @@
   display:inline-block;
 }
 .main_subscribe .subscribe_btns .form-group #places-input{
-  width:70%;
+  width:100%;
   background-color: transparent;
   color:#fff;
   display:inline-block;
@@ -126,9 +126,9 @@
   top: 0;
   left: 0;
   /* background-color: #111; */
-  border-right: 1px solid #c0c0c0;
+  /* border-right: 1px solid #c0c0c0;
   border-bottom: 1px solid #c0c0c0;
-  border-left: 1px solid #c0c0c0;
+  border-left: 1px solid #c0c0c0; */
 
   overflow-x: hidden;
   padding-top: 20px;
@@ -181,3 +181,56 @@
   padding-right: 8px;
 }
 
+.abb_head .abb_head_icon .icofont,
+.abb_head .abb_head_icon .icon{
+    width:2em;
+    height: 2em;
+    line-height: 2em;
+    font-size:1em;
+    background-color: #ff6863;
+    color:#fff;
+    display: inline-block;
+    text-align: center;
+    border-radius: 50%;
+    box-shadow: 0px 0px 0px 6px rgba(255, 104, 99, 0.4);
+}
+
+.abb_head{
+  position: relative;
+}
+
+.front {
+  backface-visibility: hidden;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: absolute;
+  top: 0;
+  left: 45%;
+
+}
+.back {
+  backface-visibility: hidden;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: absolute;
+  top: 0;
+  left: 45%;
+  transform: rotateY(-180deg);
+}
+.abb_head:hover .back {
+  transform: rotateY(0deg);
+}
+.abb_head:hover .front {
+  transform: rotateY(180deg);
+}
+
+.abb_plus{
+  height: 2em;
+  width: 2em;
+}
+
+.abb_plus:hover{
+  filter: drop-shadow(2px 2px 2px #888);
+  cursor: pointer;
+
+}
