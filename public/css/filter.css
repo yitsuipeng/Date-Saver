@@ -26,8 +26,22 @@
 
 }
 
+.plus:hover, .minus:hover{
+  /* height: 2em;
+  width: 2em;
+  position: absolute;
+  top: 5px;
+  right: 10px; */
+  filter: drop-shadow(2px 2px 2px #888);
+  cursor: pointer;
+
+}
+
 #schedule .list-group-item:hover {
-  background-color: lightpink;
+  /* background-color: lightpink; */
+  filter: drop-shadow(2px 2px 2px #888);
+  font-weight: bold;
+  cursor: move;
 }
 
 /* 輸入框可以漂亮 */
@@ -102,15 +116,20 @@
 
 
 /*要試試看側邊加選像*/
+
 /* Fixed sidenav, full height */
 .sidenav {
-  height: 300px;
+  height: 250px;
   width: 100%;
   /* position: fixed; */
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #111;
+  /* background-color: #111; */
+  border-right: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  border-left: 1px solid #c0c0c0;
+
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -119,7 +138,7 @@
 .sidenav a, .dropdown-btn {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 20px;
+  /* font-size: 1em; */
   color: #818181;
   display: block;
   border: none;
@@ -132,26 +151,27 @@
 
 /* On mouse-over */
 .sidenav a:hover, .dropdown-btn:hover {
-  color: #f1f1f1;
+  font-weight: bold;
+  /* color: #111; */
 }
 
-/* Main content */
+/* Main content
 .main {
-  margin-left: 200px; /* Same as the width of the sidenav */
-  font-size: 20px; /* Increased text to enable scrolling */
+  margin-left: 200px;
+  font-size: 20px; 
   padding: 0px 10px;
-}
+} */
 
 /* Add an active class to the active dropdown button */
 .active {
-  background-color:#ff6863;
+  background-color: #ff6863;
   color: white;
 }
 
 /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
 .dropdown-container {
   display: none;
-  background-color: #262626;
+  background-color: #f1f1f1;
   padding-left: 8px;
 }
 

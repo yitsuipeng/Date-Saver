@@ -230,7 +230,6 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
                 address: x.address,
                 name: x.name,
                 rating: x.rating,
-                icon: x.icon
             }
 
             let newSite = await queryPool('INSERT INTO places SET ?', newSiteDetails);
@@ -250,7 +249,7 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
 
     await collaborativeFiltering();
 
-    res.send("save complete");
+    res.send({success:'save'});
 
 
 });

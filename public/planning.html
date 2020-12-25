@@ -105,7 +105,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="main_subscribe text-center">
-                            <div class="col-sm-4 ">
+                            <div class="col-md-4">
                                 <div class="subscribe_btns">
                                     <div class="form-group">
                                         <input type="text" class="form-control" id="places-input" placeholder="輸入起點">
@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                             </div> -->
-                            <div class="col-sm-8">
+                            <div class="col-md-8">
                                 <div class="subscribe_btns">
                                     <div class="form-group">
                                         <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
@@ -172,7 +172,7 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <div id="map" style="height:300px"></div>
+                        <div id="map" style="height:250px;"></div>
                     </div>
                 </div>
             </div>
@@ -201,46 +201,55 @@
                 </div>
             </section>
             <!--About Sections-->
-            <section id="about" class="about roomy-50">
+            <section id="about" class="about" style="min-height:600px">
                 <div class="container">
                     <div class="row">
                         <div class="main_about">
 
-                            <div class="col-md-6">
-                                <button id="optimize-schedule" type="submit" class="btn btn-primary">神啊給我最短路線</button>
-                                <button id="make-schedule" type="submit" class="btn btn-primary">匯出路徑</button>
-                                
-                                <hr>
+                            <div class="col-md-4">                              
                                 <div class="about_accordion wow fadeIn">
-                                    <div id="schedule"></div>
+                                    <button id="optimize-schedule" type="submit" class="btn btn-primary">神啊給我最短路線</button>
+                                    <button id="make-schedule" type="submit" class="btn btn-primary">匯出路徑</button>
+                                    
                                     <!--這裡要放東西-->
                                 </div>
+                                <br>
+                                <div id="schedule"></div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <div class="about_content">
-                                    <h4 id="interesting-distance">點選景點加入選單，拖曳可調整景點順序喔</h4>
-                                    <h4 id="interesting-time"></h4>
+                                    <p>點選景點加入選單，拖曳可調整景點順序喔</p>
                                     <div class="separator_left"></div>
+                                    <h4 id="interesting-distance"></h4>
+                                    <h4 id="interesting-time"></h4>
                                     <!--這裡要放東西-->
                                     <div id="self-chosen-site"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="about_content" style="text-align: center;">
+                                    <p>在這裡約會的人會接著去...</p>
+                                    <div class="separator_auto"></div>
+                                    <div id="recommend-site" class="about_bottom_content set_center">
+                                    </div>
+
                                 </div>
                             </div>
 
                         </div>
                     </div><!--End off row-->
                 </div><!--End off container -->
-                 <hr />
-                <div class="container">
+                <!-- <div class="container">
                     <div class="row">
                         <div class="main_service roomy-50">
                             <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
                                 <div class="text-center">
-                                    <h6>在這裡約會的人也去過...</h6>
+                                    <h6>在這裡約會的人...</h6>
                                     <div class="separator_auto"></div>
                                 </div>
                             </div>
                             <div id="recommend-site" class="about_bottom_content set_center" style="text-align: center;">
-                                <!-- <div class="col-md-4">
+                                <div class="col-md-4">
                                     <div class="about_bottom_item m-top-20">
                                         <div class="ab_head">
                                             <div class="ab_head_icon">
@@ -252,11 +261,11 @@
                                             sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
                                             magna diam aliquafm erat voluitpati. </p>
                                     </div>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
-                    </div><!--End off row -->
-                </div><!--End off container -->
+                    </div>
+                </div> -->
             </section> <!--End off About section -->
 
             <!-- The Modal -->

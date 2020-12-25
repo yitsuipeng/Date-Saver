@@ -20,7 +20,8 @@
         background-size: cover;
         position: relative;
         padding-top: 15%;
-        padding-bottom: 15%;
+        padding-bottom: 20%;
+        min-height: 70%;
     
     }
 }
