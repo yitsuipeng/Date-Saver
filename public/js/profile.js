@@ -59,7 +59,7 @@ if(token){
 
 }
 else{
-    window.location.replace("sign.html");
+    warningAlert('請先登入喔');
 }
 
 function showCalendar(dataOrder) {
@@ -95,11 +95,11 @@ function showOrderDetails(target){
 
     let details = JSON.parse(orders[target].details);
 
-    document.getElementById('details').innerHTML = `<h6 class="m-top-20">${details[0].name}</h6><p>${details[0].address}</p>`;
+    document.getElementById('details').innerHTML = `<br><ul><li><i class="fa fa-check-circle text-primary"></i> ${details[0].name}</li><li>${details[0].address}</li></ul><br>`;
     document.getElementById('order-id').setAttribute("value",orders[target].id);
 
     for(let i=1 ; i<details.length ; i++){
-        let content = `<h6 class="m-top-20">${details[i].name}</h6><p>${details[i].address} / ${details[i].distance.text} / ${details[i].duration.text}</p>`;
+        let content = `<ul><li><i class="fa fa-check-circle text-primary"></i> ${details[i].name}</li><li> ${details[i].address} </li><li> ${details[i].mode} / ${details[i].distance.text} / 約 ${details[i].duration.text}</li></ul><br>`;
         document.getElementById('details').innerHTML += content;
     }
 
@@ -120,4 +120,19 @@ function turnTimeText(time){
     output[1] = Math.round(time%3600/60);
     return output;
   
+}
+
+function warningAlert(warning){
+
+    Swal.fire({
+        title: '哎呀',
+        text: warning,
+        icon: 'warning',
+        showConfirmButton: false,
+        timer: 1500
+    }).then(()=>{
+             
+        window.location.replace("sign.html");
+    });
+
 }

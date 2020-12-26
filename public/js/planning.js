@@ -110,6 +110,51 @@ dragula([document.getElementById('schedule')], {
 
 async function initMap() {
 
+  if(token) {
+    fetch(`user/verifyUser`, {
+      method: 'GET',
+      headers: new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': token
+      })
+    })
+    .then(res => res.json())
+    .then(res => {
+  
+      if(!res.data.access_token){
+
+        Swal.fire({
+          title: '哎呀',
+          text: '請先登入喔',
+          icon: 'warning',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(()=>{
+               
+            window.location.replace("sign.html");
+        });
+
+      }
+  
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        return error;
+    });
+
+  } else {
+    Swal.fire({
+      title: '哎呀',
+      text: '請先登入喔',
+      icon: 'warning',
+      showConfirmButton: false,
+      timer: 1500
+    }).then(()=>{
+           
+            window.location.replace("sign.html");
+    });
+
+  }
     const searchAutocomplete = new google.maps.places.Autocomplete(
       document.getElementById('places-input'),{
         location: {lat:25.0591607,lng:121.5387777},
@@ -271,7 +316,8 @@ async function initMap() {
 
         document.getElementById("interesting-distance").innerHTML = "";
         document.getElementById("interesting-time").innerHTML = "";
-        
+        document.getElementById("recommend-site").innerHTML = "";
+
         removeRoutes();
         let pin = options[e.target.title];
         showListings(optionMarkers);
@@ -293,7 +339,7 @@ async function initMap() {
 
       createBigCard(pin);
 
-    })
+    });
 
     document.getElementById('self-chosen-site').addEventListener('click', (e) => {
       let pin = e.target;
@@ -324,7 +370,7 @@ async function initMap() {
       } else if(pin.className == 'drag-drop-item list-group-item'){
       }
 
-    })
+    });
 
     document.getElementById('schedule').addEventListener('click', (e) => {
       let pin = e.target;
@@ -345,7 +391,7 @@ async function initMap() {
         bounceListings(map,markers,pin.title);
       }
 
-    })
+    });
 
     document.getElementById('optimize-schedule').addEventListener('click', async() => {
         let scheduleArrey = document.getElementById('schedule');
@@ -400,12 +446,9 @@ async function initMap() {
         }
 
         if(scheduleInput.length<2){
-          Swal.fire({
-            title: '哎呀',
-            text: '約會好像太短了,再多加一些回憶吧!',
-            icon: 'warning',
-            confirmButtonColor: '#ff6863',
-          })
+
+          warningAlert('約會好像太短了,再多加一些回憶吧!');
+                  
         }else{
           rankMarkers(scheduleInput);
 
@@ -422,7 +465,7 @@ async function initMap() {
               document.getElementById('self-chosen-site').innerHTML = `<br><ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul><br>`;
 
               for(let i=1 ; i<plan.schedule.length ; i++){
-                  let content = `<ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[i].name}</li><li> ${plan.schedule[i].address} </li><li> ${plan.schedule[i].mode} / ${plan.schedule[i].distance.text} / 約${plan.schedule[i].duration.text}</li></ul><br>`;
+                  let content = `<ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[i].name}</li><li> ${plan.schedule[i].address} </li><li> ${plan.schedule[i].mode} / ${plan.schedule[i].distance.text} / 約 ${plan.schedule[i].duration.text}</li></ul><br>`;
                   document.getElementById('self-chosen-site').innerHTML += content;
               }
 
@@ -443,13 +486,10 @@ async function initMap() {
     });
 
     document.getElementById('save-schedule').addEventListener('click', () => {
-      if(!document.getElementById('date').value || !document.getElementById('name').value){
-        Swal.fire({
-          title: '哎呀',
-          text: '請先匯出路徑再儲存喔!',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        });
+      if(plan.totalTime ==0 || plan.totalDistance==0){
+
+        warningAlert('請先匯出路徑再儲存喔!');
+
       } else {
 
         // document.getElementById("plan-name").innerHTML = plan.name;
@@ -479,19 +519,13 @@ async function initMap() {
 
     document.getElementById('done').addEventListener('click', async() => {
       if(!document.getElementById('date').value || !document.getElementById('name').value){
-        Swal.fire({
-          title: '哎呀',
-          text: '請輸入約會日期跟旅程名稱喔!',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        })
+
+        warningAlert('請輸入約會日期跟旅程名稱喔!');
+
       } else if(plan.totalTime ==0 || plan.totalDistance==0) {
-        Swal.fire({
-          title: '哎呀',
-          text: '請先匯出路徑才能儲存旅程喔!',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        })
+
+        warningAlert('請先匯出路徑才能儲存旅程喔!');
+
       } else {
         plan.startDate = document.getElementById('date').value;
         plan.name = document.getElementById('name').value;
@@ -506,18 +540,18 @@ async function initMap() {
         })
         .then(res => res.json())
         .then(result => {
+            console.log(result);
             if(result.data){
               Swal.fire({
-                title: '哎呀',
-                text: '登入後才能儲存行程喔',
-                icon: 'warning',
+                title: '抱歉',
+                text: '登入過期，請重新登入後再使用',
+                icon: 'error',
                 confirmButtonColor: '#ff6863',
               });
             } else if(result.success){
               Swal.fire({
-                // position: 'center',
                 icon: 'success',
-                title: '儲存成功',
+                title: '祝你一路順風',
                 showConfirmButton: false,
                 timer: 1500
               })
@@ -539,6 +573,33 @@ async function initMap() {
             return error;
         })
       }
+
+    });
+
+    document.getElementById("recommend-site").addEventListener('click', async(e) => {
+
+      let pin = e.target;
+      selfChosen[pin.parentNode.title] = options[pin.parentNode.title];
+      console.log(pin.parentNode.title);
+
+      if(pin.className == 'abb_plus'){
+
+          addSchedule(document.getElementById('schedule'),pin.parentNode.title);
+          let newMarker = new google.maps.Marker({
+              position: selfChosen[pin.parentNode.title].location,
+              map: map,
+              animation: google.maps.Animation.DROP, // DROP掉下來、BOUNCE一直彈跳
+              draggable: false, // true、false可否拖拉
+              title: pin.parentNode.title,
+          });
+      
+          markers.push(newMarker);
+          showListings(optionMarkers);
+          showListings(markers);
+          console.log(selfChosen);
+          
+      }
+
 
     });
 
@@ -893,33 +954,6 @@ function getRecommender(placeId){
         
       }
 
-      document.getElementById("recommend-site").addEventListener('click', async(e) => {
-
-        let pin = e.target;
-        selfChosen[pin.parentNode.title] = options[pin.parentNode.title];
-        console.log(pin);
-
-        if(pin.className == 'abb_plus'){
-
-            addSchedule(document.getElementById('schedule'),pin.parentNode.title);
-            let newMarker = new google.maps.Marker({
-                position: selfChosen[pin.parentNode.title].location,
-                map: map,
-                animation: google.maps.Animation.DROP, // DROP掉下來、BOUNCE一直彈跳
-                draggable: false, // true、false可否拖拉
-                title: pin.parentNode.title,
-            });
-        
-            markers.push(newMarker);
-            showListings(optionMarkers);
-            showListings(markers);
-            console.log(selfChosen);
-            
-        }
-
-  
-      });
-
     }
 
   })
@@ -944,5 +978,17 @@ function sideOptions(sideOptionsArray) {
 
   }
 
+
+}
+
+// sweet alert
+function warningAlert(warning){
+
+  Swal.fire({
+    title: '哎呀',
+    text: warning,
+    icon: 'warning',
+    confirmButtonColor: '#ff6863',
+  })
 
 }

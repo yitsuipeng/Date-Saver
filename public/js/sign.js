@@ -55,17 +55,9 @@ upButton.addEventListener('click',function(){ //新增項目
         .then(result => {
             console.log(result);
             if(result.data.access_token){
+
                 window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                Swal.fire({
-                    icon: 'success',
-                    title: '歡迎',
-                    confirmButtonColor: '#ff6863',
-                }).then((result)=>{
-                    if (result.isConfirmed) {
-                        
-                        window.location.replace("profile.html");
-                    }
-                });
+                successAlert(result.data.username);
                 
             }else{
                 Swal.fire({
@@ -106,16 +98,8 @@ inButton.addEventListener('click',function(){ //新增項目
             if(result.data.access_token){
 
                 window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                Swal.fire({
-                    icon: 'success',
-                    title: '歡迎',
-                    confirmButtonColor: '#ff6863',
-                }).then((result)=>{
-                    if (result.isConfirmed) {
-                        
-                        window.location.replace("profile.html");
-                    }
-                });
+                successAlert(result.data.username);
+
             }else{
                 Swal.fire({
                     icon: 'error',
@@ -153,17 +137,10 @@ function statusChangeCallback(response) {  // Called with the results from FB.ge
         .then(res => res.json())
         .then(result => {
             if(result.data.access_token){
+
                 window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                Swal.fire({
-                    icon: 'success',
-                    title: '歡迎',
-                    confirmButtonColor: '#ff6863',
-                }).then((result)=>{
-                    if (result.isConfirmed) {
-                        
-                        window.location.replace("profile.html");
-                    }
-                });
+                successAlert(result.data.username);
+
             }else{
                 Swal.fire({
                     icon: 'error',
@@ -201,4 +178,34 @@ window.fbAsyncInit = function() {
     });
 
 };
+
+function successAlert(name){
+
+    Swal.fire({
+        icon: 'success',
+        title: `Hi ${name}, 歡迎`,
+        showConfirmButton: false,
+        timer: 1500
+    }).then(()=>{
+            
+        window.location.replace("planning.html");
+
+    });
+
+}
+
+function warningAlert(warning){
+
+    Swal.fire({
+        title: '哎呀',
+        text: warning,
+        icon: 'warning',
+        showConfirmButton: false,
+        timer: 1500
+      }).then(()=>{
+             
+        window.location.replace("sign.html");
+      });
+
+}
  

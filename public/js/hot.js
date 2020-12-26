@@ -139,7 +139,7 @@ fetch(`user/getHotOrders`, {
             document.getElementById("plan-name").innerText = blogs[pin.parentNode.title].name;
             let pinArray = JSON.parse(blogs[pin.parentNode.title].details);
             document.getElementById("plan-comment").innerHTML = blogs[pin.parentNode.title].comment;
-            document.getElementById("plan-details").innerHTML = `<ul><h6><i class="fa fa-check-circle text-primary"></i> ${pinArray[0].name}</h6><p>${pinArray[0].address}<p></ul>`;
+            document.getElementById("plan-details").innerHTML =  `<ul><li><i class="fa fa-check-circle text-primary"></i> ${pinArray[0].name}</li><li>${pinArray[0].address}</li></ul><br>`;
 
             removeMarkers(markers);
             markers=[];
@@ -156,7 +156,7 @@ fetch(`user/getHotOrders`, {
 
             for(let i=1; i<pinArray.length; i++){
 
-                document.getElementById("plan-details").innerHTML += `<ul><h6><i class="fa fa-check-circle text-primary"></i> ${pinArray[i].name}</h6><p>${pinArray[i].address} / ${pinArray[i].distance.text} / ${pinArray[i].duration.text}<p></ul>`;
+                document.getElementById("plan-details").innerHTML += `<ul><li><i class="fa fa-check-circle text-primary"></i> ${pinArray[i].name}</li><li> ${pinArray[i].address} </li><li> ${pinArray[i].mode} / ${pinArray[i].distance.text} / 約 ${pinArray[i].duration.text}</li></ul><br>`;
 
                 marker = new google.maps.Marker({
                     position: pinArray[i].location,

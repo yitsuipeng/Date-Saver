@@ -237,20 +237,16 @@ router.post('/savePlanning', verifyToken, async (req, res) => {
         }
     }
 
+    await collaborativeFiltering();
 
     if (insertResult) {
         console.log('succeed');
 
-        res.status(200).send( {data: '儲存成功，祝你一路順風' });
+        res.status(200).send( {success: '儲存成功，祝你一路順風' });
 
     } else {
         res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
     }
-
-    await collaborativeFiltering();
-
-    res.send({success:'save'});
-
 
 });
 
