@@ -32,10 +32,9 @@ if(token){
             document.getElementById('user-picture').style.backgroundImage = `url(${photoUrl})`;
             document.getElementById('user-name').innerHTML = data.user.name;
             document.getElementById('user-email').innerHTML = 'email: '+data.user.email;
-            document.getElementById('order-count').innerHTML = data.order.length;
-            document.getElementById('post-count').innerHTML = shares;
-            document.getElementById('view-count').innerHTML = views;
-            
+            document.getElementById('order-count').innerText = data.order.length;
+            document.getElementById('post-count').innerText = shares;
+            document.getElementById('view-count').innerText = views;
     
             showCalendar(data.order);
     
@@ -135,4 +134,17 @@ function warningAlert(warning){
         window.location.replace("sign.html");
     });
 
+}
+
+function countToNumber (element, number, prefix, suffix, duration) {
+    $({count: parseInt(element.text().split("+")[0].replace(/\,/g, ''))}).animate({count: number}, {
+      duration: duration ? duration : 1000,
+      easing: 'swing', 
+      step: function (now) {
+        element.text((prefix + Math.floor(now) + suffix).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+      },
+      complete: function () {
+        countingFromZero = false;
+      }
+    });
 }
