@@ -107,15 +107,51 @@
                     <div class="row">
                         <div class="main_impress text-center">
                             <div class="col-sm-8 col-sm-offset-2">
-                                <h2 class="text-white text-uppercase">HELLO FRIEND</h2>
+                                <h2 class="text-white text-uppercase"></h2>
+                                    
                             </div>
                         </div>
+                        <!-- 嘗試LOGIN模板 -->
+
+                        <div class="login-reg-panel" style="margin-top: 200px;">
+                            <div class="login-info-box">
+                                <h3>約會老手?</h3>
+                                <p>歡迎回來</p>
+                                <label id="label-register" for="log-reg-show">登入</label>
+                                <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
+                            </div>
+                                                
+                            <div class="register-info-box">
+                                <h3>約會新手?</h3>
+                                <p>快來加入我們吧</p>
+                                <label id="label-login" for="log-login-show">註冊</label>
+                                <input type="radio" name="active-log-panel" id="log-login-show">
+                            </div>
+                                                
+                            <div class="white-panel">
+                                <div class="login-show">
+                                    <h3>登入</h3>
+                                    <input id="inInputEmail" name="email" type="text" placeholder="Email" required="">
+                                    <input id="inInputPassword" name="password" type="password" placeholder="Password" required="">
+                                    <input id="inButton" type="button" value="Login"  style="margin-bottom: 20px;">
+                                    <div class="fb-login-button" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true" data-width="100%" scope="public_profile,email" onlogin="checkLoginState();"></div>
+                                </div>
+                                <div class="register-show">
+                                    <h3>註冊</h3>
+                                    <input id="upInputName" name="first_name" type="text" placeholder="Name">
+                                    <input id="upInputEmail" name="email" type="password" placeholder="Email">
+                                    <input id="upInputPassword" name="password" type="password" placeholder="Password">
+                                    <input id="upButton" type="button" value="Register">
+                                </div>
+                            </div>
+                        </div>
+
                     </div><!--End off row -->
                 </div><!--End off container -->
             </section><!-- End off Impress section-->
 
 <!--Contact Us Section-->
-<section id="contact" class="contact bg-mega fix">
+<!-- <section id="contact" class="contact bg-mega fix">
     <div class="container">
         <div class="row">
             <div class="main_contact roomy-50 text-white">
@@ -127,8 +163,6 @@
                         </div>
                         <div class="widget_socail m-top-30">
                             <ul class="list-inline">
-                                <!-- <li><a href=""><i class="fa fa-facebook"></i></a></li> -->
-                                <!-- <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button> -->
                                 <div class="fb-login-button" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true" data-width="100px" scope="public_profile,email" onlogin="checkLoginState();"></div>
                             </ul>
                         </div>
@@ -172,44 +206,11 @@
                     </div>
             </div>
             </div>
-        </div><!--End off row -->
-    </div><!--End off container -->
-</section><!--End off Contact Section-->
-
-    <!-- 嘗試LOGIN模板 -->
-
-    <div class="login-reg-panel">
-        <div class="login-info-box">
-            <h2>Have an account?</h2>
-            <p>Lorem ipsum dolor sit amet</p>
-            <label id="label-register" for="log-reg-show">Login</label>
-            <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
-        </div>
-                            
-        <div class="register-info-box">
-            <h2>Don't have an account?</h2>
-            <p>Lorem ipsum dolor sit amet</p>
-            <label id="label-login" for="log-login-show">Register</label>
-            <input type="radio" name="active-log-panel" id="log-login-show">
-        </div>
-                            
-        <div class="white-panel">
-            <div class="login-show">
-                <h2>LOGIN</h2>
-                <input type="text" placeholder="Email">
-                <input type="password" placeholder="Password">
-                <input type="button" value="Login">
-                <a href="">Forgot password?</a>
-            </div>
-            <div class="register-show">
-                <h2>REGISTER</h2>
-                <input type="text" placeholder="Email">
-                <input type="password" placeholder="Password">
-                <input type="password" placeholder="Confirm Password">
-                <input type="button" value="Register">
-            </div>
         </div>
     </div>
+</section> -->
+
+
 
 
             <!-- scroll up--   以下都要黏>

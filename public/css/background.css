@@ -28,10 +28,10 @@
 
    
 
-a{
+/* a{
   text-decoration:none;
   color:#444444;
-}
+} */
 .login-reg-panel{
     position: relative;
     top: 50%;
@@ -41,13 +41,13 @@ a{
 	right:0;left:0;
     margin:auto;
     height:400px;
-    background-color: rgba(236, 48, 20, 0.9);
+    background-color: rgba(255,255, 255, 0.5);
 }
 .white-panel{
     background-color: rgba(255,255, 255, 1);
-    height:500px;
+    height:400px;
     position:absolute;
-    top:-50px;
+    top:-25px;
     width:50%;
     right:calc(50% - 50px);
     transition:.3s ease-in-out;
@@ -59,11 +59,11 @@ a{
     display:none;
 }
 .login-reg-panel{
-    color:#B8B8B8;
+    color:white;
 }
 .login-reg-panel #label-login, 
 .login-reg-panel #label-register{
-    border:1px solid #9E9E9E;
+    border:1px solid #ff6863;
     padding:5px 5px;
     width:150px;
     display:block;
@@ -117,7 +117,7 @@ a{
 .login-show input[type="button"] {
     max-width: 150px;
     width: 100%;
-    background: #444444;
+    background: #ff6863;
     color: #f9f9f9;
     border: none;
     padding: 10px;
@@ -142,7 +142,7 @@ a{
 .register-show input[type="button"] {
     max-width: 150px;
     width: 100%;
-    background: #444444;
+    background: #ff6863;
     color: #f9f9f9;
     border: none;
     padding: 10px;
@@ -165,11 +165,7 @@ a{
     letter-spacing: 1px;
     z-index: 99;
 }
-a{
-  text-decoration:none;
-  color:#2c7715;
-}
-    
+
     
     
 
