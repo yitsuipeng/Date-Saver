@@ -156,7 +156,7 @@ router.post('/signin', async (req, res) => {
                     let insertResult = queryPool('INSERT INTO users SET ?', userInfo);
                     if (insertResult) {
             
-                        let payload = { id: insertResult[0].insertId, 
+                        let payload = { id: insertResult.insertId, 
                                         name: userInfo.name, 
                                         email: userInfo.email, 
                                         picture: userInfo.picture
