@@ -37,7 +37,12 @@ let inInputPassword = document.querySelector('#inInputPassword');
 
 upButton.addEventListener('click',function(){ //新增項目
     if(!upInputName.value||!upInputPassword.value||!upInputEmail.value){
-        alert('請完成全部欄位');
+        Swal.fire({
+            icon: 'warning',
+            title: '哎呀',
+            text: '請完成全部欄位',
+            confirmButtonColor: '#ff6863'
+        });
     }else{
         console.log('signup info complete');
 
@@ -79,7 +84,12 @@ upButton.addEventListener('click',function(){ //新增項目
 
 inButton.addEventListener('click',function(){ //新增項目
     if(!inInputPassword.value||!inInputEmail.value){
-        alert('請完成全部欄位');
+        Swal.fire({
+            icon: 'warning',
+            title: '哎呀',
+            text: '請完成全部欄位',
+            confirmButtonColor: '#ff6863'
+        });
     }else{
         console.log('signin info complete');
 
