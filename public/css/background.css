@@ -166,6 +166,9 @@
     z-index: 99;
 }
 
+.login-show .fb_iframe_widget{
+    display: block;
+}
     
     
 
