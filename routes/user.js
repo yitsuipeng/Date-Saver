@@ -64,7 +64,7 @@ router.post('/signup', async (req, res) => {
 
             let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
 
-            res.status(200).send( {data: { access_token: token }});
+            res.status(200).send( {data: { access_token: token, username: userInfo.name }});
 
         } else {
             res.status(500).send({ data: '系統錯誤，請稍後重試一次'});
@@ -268,7 +268,7 @@ router.post('/uploadShares', upload.single('main_image'), async (req, res) => {
 // hot
 router.get('/getHotOrders', upload.single('main_image'), async (req, res) => {
 
-    let sql = `SELECT * FROM orders WHERE comment IS NOT NULL;`;
+    let sql = `SELECT * FROM orders WHERE comment IS NOT NULL ORDER BY view DESC;`;
     let condition = null;
 
     let orderResult = await queryPool(sql, condition);

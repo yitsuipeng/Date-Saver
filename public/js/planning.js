@@ -134,6 +134,14 @@ async function initMap() {
             window.location.replace("sign.html");
         });
 
+      }else{
+
+        Swal.fire({
+          title: '溫馨小提示',
+          text: '輸入約會起點並按下搜尋，讓我們為你推薦下個景點',
+          confirmButtonColor: '#ff6863'
+
+        });
       }
   
     })
@@ -175,12 +183,7 @@ async function initMap() {
 
       if (!place.geometry) {
 
-        Swal.fire({
-          title: '哎呀',
-          text: '沒有相符的地點喔',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        })
+        warningAlert('沒有相符的地點喔');
     
       } else if (place.formatted_address.indexOf("北市")>0 || place.formatted_address.indexOf("Taipei")>0) {    
 
@@ -195,12 +198,7 @@ async function initMap() {
           
       } else {
         
-        Swal.fire({
-          title: '哎呀',
-          text: '只限大台北地區喔，請見諒',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        })
+        warningAlert('只限大台北地區喔，請見諒');
 
       }   
     });
@@ -291,17 +289,17 @@ async function initMap() {
 
         document.getElementById("recommend-site").innerHTML = "";
         document.getElementById('self-chosen-site').innerHTML = "";
+        document.getElementById("interesting-distance").innerHTML = "";
+        document.getElementById("interesting-time").innerHTML = "";
+        
         addSchedule(document.getElementById('schedule'),plan.startPoint.name);
         map.setCenter(plan.startPoint.location);
         filterSelection("shop");
         
       }else{
-        Swal.fire({
-          title: '哎呀',
-          text: '地點好像有誤喔，請修正一下',
-          icon: 'warning',
-          confirmButtonColor: '#ff6863',
-        })
+
+        warningAlert('地點好像有誤喔，請修正一下');
+
       }
     
     });
@@ -317,6 +315,7 @@ async function initMap() {
         document.getElementById("interesting-distance").innerHTML = "";
         document.getElementById("interesting-time").innerHTML = "";
         document.getElementById("recommend-site").innerHTML = "";
+        document.getElementById('self-chosen-site').innerHTML = "";
 
         removeRoutes();
         let pin = options[e.target.title];
@@ -402,12 +401,9 @@ async function initMap() {
         }
         
         if(scheduleInput.length>9){
-          Swal.fire({
-            title: '哎呀',
-            text: '行程好像有點多，要不要刪掉一些呢?',
-            icon: 'warning',
-            confirmButtonColor: '#ff6863',
-          })
+
+          warningAlert('行程好像有點多，要不要刪掉一些呢?');
+
         }else if(scheduleInput.length>1){
 
           await fetch('api/1.0/optimization', {
@@ -472,12 +468,9 @@ async function initMap() {
             }), 1000);
           })
           .catch(error => {
-            Swal.fire({
-              title: '哎呀',
-              text: '系統忙碌中，請稍後再試',
-              icon: 'warning',
-              confirmButtonColor: '#ff6863',
-            });
+
+            warningAlert('系統忙碌中，請稍後再試');
+
             console.log('Error:', error);
           });
 
@@ -542,6 +535,7 @@ async function initMap() {
         .then(result => {
             console.log(result);
             if(result.data){
+              
               Swal.fire({
                 title: '抱歉',
                 text: '登入過期，請重新登入後再使用',
@@ -560,12 +554,9 @@ async function initMap() {
               });
               
             } else {
-              Swal.fire({
-                title: '哎呀',
-                text: '系統忙碌中，請稍後再試',
-                icon: 'warning',
-                confirmButtonColor: '#ff6863',
-              });
+
+              warningAlert('系統忙碌中，請稍後再試');
+
             }
         })
         .catch(error => {
