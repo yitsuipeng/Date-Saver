@@ -54,13 +54,14 @@ router.post('/signup', async (req, res) => {
     } else { // insert user info
         let insertResult = await queryPool('INSERT INTO users SET ?', userInfo);
         if (insertResult) {
-            console.log(insertResult);
-
+            
             let payload = { id: insertResult.insertId, 
                             name: userInfo.name, 
                             email: userInfo.email, 
                             picture: userInfo.picture
                         };
+
+            console.log(payload);
 
             let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
 
@@ -155,14 +156,14 @@ router.post('/signin', async (req, res) => {
                 } else { // email not exist
                     let insertResult = queryPool('INSERT INTO users SET ?', userInfo);
                     if (insertResult) {
-                        console.log(insertResult);
             
                         let payload = { id: insertResult.insertId, 
                                         name: userInfo.name, 
                                         email: userInfo.email, 
                                         picture: userInfo.picture
                                     };
-                        console.log("payload: "+payload);
+                        console.log(payload);
+
                         let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
                         
                         console.log('facebook sign up');
