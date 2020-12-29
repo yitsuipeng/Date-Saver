@@ -111,7 +111,7 @@ dragula([document.getElementById('schedule')], {
 async function initMap() {
 
   if(token) {
-    fetch(`user/verifyUser`, {
+    fetch(`api/1.0/verifyUser`, {
       method: 'GET',
       headers: new Headers({
       'Content-Type': 'application/json',
@@ -523,7 +523,7 @@ async function initMap() {
         plan.startDate = document.getElementById('date').value;
         plan.name = document.getElementById('name').value;
 
-        fetch('user/savePlanning', {
+        fetch('api/1.0/savePlanning', {
           method: 'POST',
           headers: new Headers({
               'Content-Type': 'application/json',

@@ -1,13 +1,16 @@
 const router = require('express').Router();
-const {wrapAsync} = require('./util');
+const { upload,verifyToken,wrapAsync } = require('./util');
+
+
 
 const {
     getIndexOption,
     getNearOption,
     optimization,
-    recommendation
+    recommendation,
+    savePlanning
     
-} = require('./controllers');
+} = require('./planning_controller');
 
 router.route('/getIndexOption')
     .get(wrapAsync(getIndexOption));
@@ -20,5 +23,41 @@ router.route('/optimization')
 
 router.route('/recommendation/:id')
     .get(wrapAsync(recommendation));
+
+router.route('/savePlanning')
+    .post(wrapAsync(savePlanning),verifyToken);
+
+
+
+const {
+    signup,
+    signin,
+    profile,
+    verifyUser,
+    uploadShares,
+    getHotOrders,
+    addView,
+    
+} = require('./user_controller');
+
+router.route('/signup')
+    .post(wrapAsync(signup));
+
+router.route('/signin')
+    .post(wrapAsync(signin));
+
+router.route('/profile')
+    .post(verifyToken, wrapAsync(profile));
+
+router.route('/verifyUser')
+    .get(verifyToken, wrapAsync(verifyUser));
+
+router.route('/uploadShares')
+    .post(upload.single('main_image'), wrapAsync(uploadShares));
+
+router.route('/getHotOrders')
+    .get(wrapAsync(getHotOrders));
+
+
 
 module.exports = router;

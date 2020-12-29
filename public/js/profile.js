@@ -6,7 +6,7 @@ let orders={};
 if(token){
     console.log('there is a token');
 
-    fetch('user/profile', {
+    fetch('api/1.0/profile', {
         method: 'GET',
         headers: new Headers({
         'Authorization': token

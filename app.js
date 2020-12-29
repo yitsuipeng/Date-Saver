@@ -1,7 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const axios = require('axios');
-const jsSHA = require('jssha');
 const socketView = require('./routes/socket');
 const app = express();
 
@@ -16,14 +14,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-
 //set engine
 app.set('json spaces', 2);
 
-
 //connect to other js files
 app.use('/api/1.0', require('./routes/routers'));
-app.use('/user', require('./routes/user'));
+// app.use('/user', require('./routes/user_controller'));
 
 
 // Page not found

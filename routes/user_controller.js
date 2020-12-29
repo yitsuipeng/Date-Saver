@@ -6,32 +6,24 @@ const axios = require('axios');
 const { db,queryPool,intoSql } = require('./db');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { upload } = require('./util');
+const { upload,verifyToken } = require('./util');
+const validator = require('validator');
 
+const signup = async (req, res) => {
+    let {name} = req.body;
+    const {email, password} = req.body;
 
-// clean the Bearer token
-function verifyToken (req, res, next) {
-    const bearerHeader = req.headers.authorization;
-    if (bearerHeader) {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-
-        jwt.verify(bearerToken, process.env.secretAccessKey, (err, data) => {
-            if(err){
-                console.log(err);
-                res.status(403).send({data:'登入過期，請重新登入'});
-            } else {
-                console.log(data);
-                req.token = data;
-                next();
-            }
-        });
-    } else {
-        res.status(400).send({data:'請先登入喔'});
+    if(!name || !email || !password) {
+        res.status(400).send({error:'Request Error: name, email and password are required.'});
+        return;
     }
-}
 
-router.post('/signup', async (req, res) => {
+    if (!validator.isEmail(email)) {
+        res.status(400).send({error:'Request Error: Invalid email format'});
+        return;
+    }
+
+    name = validator.escape(name);
 
     const hash = crypto.createHash('sha256');
     const userInfo = {
@@ -72,9 +64,9 @@ router.post('/signup', async (req, res) => {
         }
     }
 
-});
+};
 
-router.post('/signin', async (req, res) => {
+const signin = async (req, res) => {
     console.log(req.body);
     if (req.body.provider == 'native') {
         let hash = crypto.createHash('sha256');
@@ -179,10 +171,10 @@ router.post('/signin', async (req, res) => {
                 console.error('Error:', error);
             });
     }
-});
+};
 
 // profile
-router.get('/profile', verifyToken, async(req, res) => {
+const profile = async(req, res) => {
 
     let sql = `SELECT * FROM orders WHERE user_id = '${req.token.id}';`;
     let condition = null;
@@ -191,69 +183,15 @@ router.get('/profile', verifyToken, async(req, res) => {
     console.log(orderResult);
     res.status(200).send({ data: {user:req.token, order:orderResult}});
 
-});
+};
 
 // planning
-router.get('/verifyUser', verifyToken, async (req, res) => {
+const verifyUser = async (req, res) => {
     res.status(200).send({ data: {access_token:req.token}});
-});
-
-router.post('/savePlanning', verifyToken, async (req, res) => {
-
-    console.log(req.body);
-    console.log(req.token);
-
-    const orderInfo = {
-        user_id: req.token.id,
-        details: JSON.stringify(req.body.plan.schedule),
-        total_duration: req.body.plan.totalTime,
-        total_distance: req.body.plan.totalDistance,
-        date: req.body.plan.startDate,
-        name: req.body.plan.name,
-        view: 0
-    };
-
-    let insertResult = await queryPool('INSERT INTO orders SET ?', orderInfo);
-    let places = await queryPool('SELECT place_id FROM places', null);
-
-    for(let x of req.body.plan.schedule){
-        let same = 0;
-        for(let y of places){
-            if(x.place_id == y.place_id){
-                same = 1;
-            }
-        }
-        if (same==0){
-            let newSiteDetails = {
-                url: x.url,
-                place_id: x.place_id,
-                lat: x.location.lat,
-                lng: x.location.lng,
-                address: x.address,
-                name: x.name,
-                rating: x.rating,
-            }
-
-            let newSite = await queryPool('INSERT INTO places SET ?', newSiteDetails);
-            console.log(newSite);
-        }
-    }
-
-    await collaborativeFiltering();
-
-    if (insertResult) {
-        console.log('succeed');
-
-        res.status(200).send( {success: '儲存成功，祝你一路順風' });
-
-    } else {
-        res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
-    }
-
-});
+};
 
 // update order image
-router.post('/uploadShares', upload.single('main_image'), async (req, res) => {
+const uploadShares = async (req, res) => {
 
     let sql = `UPDATE orders SET ? WHERE id=${req.body.order_id}`;
     let condition = {
@@ -265,10 +203,10 @@ router.post('/uploadShares', upload.single('main_image'), async (req, res) => {
 
     res.redirect('/profile.html');
 
-});
+};
 
 // hot
-router.get('/getHotOrders', upload.single('main_image'), async (req, res) => {
+const getHotOrders = async (req, res) => {
 
     let sql = `SELECT * FROM orders WHERE comment IS NOT NULL ORDER BY view DESC;`;
     let condition = null;
@@ -277,84 +215,13 @@ router.get('/getHotOrders', upload.single('main_image'), async (req, res) => {
     res.status(200).send({ data: orderResult});
 
 
-});
+};
 
-// hot
-router.post('/addView', async (req, res) => {
-
-    console.log(req.body);
-    let sql = `UPDATE orders SET ? WHERE id=${req.body.id}`;
-    let condition = {
-        view: req.body.view
-    };
-    
-    let simQuery = await queryPool(sql, condition);
-
-    console.log(simQuery);
-    res.send({"view update":req.body});
-
-});
-
-
-async function collaborativeFiltering(){
-    let sql = `SELECT details FROM orders;`;
-    let orderHistory = await queryPool(sql, null);
-    let newArray = [];
-    let ordersList = orderHistory.flatMap(p => JSON.parse(p.details)).map(x => x.place_id);
-    
-    for(let x of orderHistory){
-        x = JSON.parse(x.details);
-        let z = x.map(y => y.place_id);
-        newArray.push(z);
-    }
-
-    console.log(ordersList.length);
-    let index = {};
-
-    for(let i=0; i<ordersList.length; i++){
-        if(!index[ordersList[i]]){
-            index[ordersList[i]] = 0;
-        }
-        index[ordersList[i]] += 1;
-    }
-
-    let n = Object.keys(index);
-    console.log(n.length);
-
-    let simArray = [];
-    for(let i of n) {
-        for(let j of n){
-            let first = [i,j];
-            simArray.push(first);
-        }   
-    }
-    console.log(simArray.length);
-
-    for(let x of simArray){
-        if(x[0]==x[1]){
-            x.push(1);
-        }else{
-            let child = 0;
-            for(let y of newArray){
-                let count = 0;
-                for(let z of y){
-                    if(z==x[0] || z==x[1]){
-                        count += 1;
-                    }
-                }
-                if(count==2){
-                    child += 1;
-                }
-            }
-            x.push(child/(index[x[0]]+index[x[1]]-child));
-        }
-    }
-    console.log(simArray);
-
-    let clearIndex = await queryPool('DELETE FROM cf_index',null);
-    let refreshIndex = await queryPool('INSERT INTO cf_index (first, second, sim) VALUES ?',[simArray]);
-    console.log(refreshIndex.affectedRows);
-    
-}
-
-module.exports = router;
+module.exports = {
+    signup,
+    signin,
+    profile,
+    verifyUser,
+    uploadShares,
+    getHotOrders
+};

@@ -46,7 +46,7 @@ upButton.addEventListener('click',function(){ //新增項目
     }else{
         console.log('signup info complete');
 
-        fetch('user/signup', {
+        fetch('api/1.0/signup', {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ inButton.addEventListener('click',function(){ //新增項目
     }else{
         console.log('signin info complete');
 
-        fetch('user/signin', {
+        fetch('api/1.0/signin', {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json'
@@ -136,7 +136,7 @@ function statusChangeCallback(response) {  // Called with the results from FB.ge
     if (response.status === 'connected') {   // Logged into your webpage and Facebook.
         console.log(response.authResponse.accessToken);
 
-        fetch('user/signin', {
+        fetch('api/1.0/signin', {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json'

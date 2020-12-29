@@ -19,7 +19,6 @@ const socketView = (socket) =>{
         socket.broadcast.emit('send',{ id: content.id, view: readView[0].view + 1 });
     });
 
-
 }
 
 module.exports = socketView;

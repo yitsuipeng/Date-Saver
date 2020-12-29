@@ -5,7 +5,9 @@ const router = express.Router();
 const axios = require('axios');
 const _ = require('lodash');
 const { db,queryPool,intoSql } = require('./db');
-const { encodeXText } = require('nodemailer/lib/shared');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { upload,verifyToken } = require('./util');
 
 
 // index
@@ -52,23 +54,9 @@ const getNearOption = async (req, res) => {
     let lng = show.lng;
     let final = { name:"", nlat: 1, elong: 1, distance:10000000000 };
     
-    // let center = `SELECT * FROM centers;`;
-    // let centerResult = await queryPool(center,null);
-
-    // await centerResult.forEach(element => {
-    //    if ( Math.pow(element.lat*10000-lat, 2) + Math.pow(element.lng*10000-lng, 2) < final.distance ){
-    //        final.name = element.name;
-    //        final.nlat = element.lat;
-    //        final.elong = element.lng;
-    //        final.distance = Math.pow(element.lat*10000-lat, 2) + Math.pow(element.lng*10000-lng, 2);
-    //    }
-    // });
-
     let near = `SELECT name, lat, lng, place_id, url, photo, address, place_key FROM places WHERE place_key IS NOT NULL;`;
     let nearResult = await queryPool(near,null);
-    // await nearResult.sort((a, b) => {
-    //     return (Math.pow(a.lat*10000-lat, 2) + Math.pow(a.lng*10000-lng, 2)) - (Math.pow(b.lat*10000-lat, 2) + Math.pow(b.lng*10000-lng, 2));
-    // });
+
     await nearResult.sort((a, b) => {
         return (getDistance(a.lat, a.lng, lat, lng) - getDistance(b.lat, b.lng, lat, lng));
     });
@@ -85,7 +73,6 @@ const getNearOption = async (req, res) => {
 
 };
 
-// planning
 const optimization = async (req, res) => {
 
     console.log(req.body);
@@ -135,7 +122,6 @@ const optimization = async (req, res) => {
 
 };
 
-
 const recommendation = async (req, res) => {
 
     let name = req.params.id;
@@ -159,6 +145,59 @@ const recommendation = async (req, res) => {
     
 };
 
+const savePlanning = async (req, res) => {
+
+    console.log(req.body);
+    console.log(req.token);
+
+    const orderInfo = {
+        user_id: req.token.id,
+        details: JSON.stringify(req.body.plan.schedule),
+        total_duration: req.body.plan.totalTime,
+        total_distance: req.body.plan.totalDistance,
+        date: req.body.plan.startDate,
+        name: req.body.plan.name,
+        view: 0
+    };
+
+    let insertResult = await queryPool('INSERT INTO orders SET ?', orderInfo);
+    let places = await queryPool('SELECT place_id FROM places', null);
+
+    for(let x of req.body.plan.schedule){
+        let same = 0;
+        for(let y of places){
+            if(x.place_id == y.place_id){
+                same = 1;
+            }
+        }
+        if (same==0){
+            let newSiteDetails = {
+                url: x.url,
+                place_id: x.place_id,
+                lat: x.location.lat,
+                lng: x.location.lng,
+                address: x.address,
+                name: x.name,
+                rating: x.rating,
+            }
+
+            let newSite = await queryPool('INSERT INTO places SET ?', newSiteDetails);
+            console.log(newSite);
+        }
+    }
+
+    await collaborativeFiltering();
+
+    if (insertResult) {
+        console.log('succeed');
+
+        res.status(200).send( {success: '儲存成功，祝你一路順風' });
+
+    } else {
+        res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
+    }
+
+};
 
 function getDistance(lat1, lng1, lat2, lng2) {
     var radLat1 = lat1 * Math.PI / 180.0;
@@ -198,10 +237,72 @@ function permutateWithoutRepetitions(permutationOptions) {
     return permutations;
 }
 
+async function collaborativeFiltering(){
+    let sql = `SELECT details FROM orders;`;
+    let orderHistory = await queryPool(sql, null);
+    let newArray = [];
+    let ordersList = orderHistory.flatMap(p => JSON.parse(p.details)).map(x => x.place_id);
+    
+    for(let x of orderHistory){
+        x = JSON.parse(x.details);
+        let z = x.map(y => y.place_id);
+        newArray.push(z);
+    }
+
+    console.log(ordersList.length);
+    let index = {};
+
+    for(let i=0; i<ordersList.length; i++){
+        if(!index[ordersList[i]]){
+            index[ordersList[i]] = 0;
+        }
+        index[ordersList[i]] += 1;
+    }
+
+    let n = Object.keys(index);
+    console.log(n.length);
+
+    let simArray = [];
+    for(let i of n) {
+        for(let j of n){
+            let first = [i,j];
+            simArray.push(first);
+        }   
+    }
+    console.log(simArray.length);
+
+    for(let x of simArray){
+        if(x[0]==x[1]){
+            x.push(1);
+        }else{
+            let child = 0;
+            for(let y of newArray){
+                let count = 0;
+                for(let z of y){
+                    if(z==x[0] || z==x[1]){
+                        count += 1;
+                    }
+                }
+                if(count==2){
+                    child += 1;
+                }
+            }
+            x.push(child/(index[x[0]]+index[x[1]]-child));
+        }
+    }
+    console.log(simArray);
+
+    let clearIndex = await queryPool('DELETE FROM cf_index',null);
+    let refreshIndex = await queryPool('INSERT INTO cf_index (first, second, sim) VALUES ?',[simArray]);
+    console.log(refreshIndex.affectedRows);
+    
+}
+
 // module.exports = router;
 module.exports = {
     getIndexOption,
     getNearOption,
     optimization,
-    recommendation
+    recommendation,
+    savePlanning
 };
