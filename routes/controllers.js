@@ -9,7 +9,7 @@ const { encodeXText } = require('nodemailer/lib/shared');
 
 
 // index
-router.get('/getIndexOption', async (req, res) => {
+const getIndexOption = async (req, res) => {
 
     let tagSql = `SELECT id,name,photo FROM tags ORDER BY id ASC;`;
     let siteSql = `SELECT name,tag,lat,lng,place_id,open_time,address FROM sites_chosen WHERE tag !='';`;
@@ -42,10 +42,10 @@ router.get('/getIndexOption', async (req, res) => {
     });
 
 
-});
+};
 
 // planning
-router.get('/getNearOption/:location', async (req, res) => {
+const getNearOption = async (req, res) => {
 
     let show = JSON.parse(req.params.location);
     let lat = show.lat;
@@ -83,10 +83,10 @@ router.get('/getNearOption/:location', async (req, res) => {
     res.send(suggest);
 
 
-});
+};
 
 // planning
-router.post('/optimization', async (req, res) => {
+const optimization = async (req, res) => {
 
     console.log(req.body);
 
@@ -133,76 +133,10 @@ router.post('/optimization', async (req, res) => {
     
     res.send(output);
 
-});
-
-// 頁數迴圈的寫法, 暫時無法使用
-router.get('/googleApiTest', async (req, res) => {
-
-    let results = [];
-    let url = `https://maps.googleapis.com/maps/api/place/textsearch/json?location=25.0399316,121.5624083&radius=2000&type=restaurant&language=zh-TW&key=AIzaSyBnr8RhoIjlRKQ7iTT8yM7IfQJpv64znyg`;
-    let nextPage = "";
-    let count = 0;
+};
 
 
-    do{
-        let addition = nextPage? ('&pagetoken='+nextPage) : "";
-        await axios.get(url+addition)
-        .then(async response => {
-            
-            // let restaurant = [];
-            for(let x of response.data.results){
-                // if(x.price_level==2 && x.rating > 4){
-
-                // }
-                // let obj = {}
-                // obj.name = x.name;
-                // obj.location = x.geometry.location;
-                results.push(x);
-            }
-            nextPage = response.data.next_page_token;
-            count+=1
-
-            console.log(count);
-            console.log(nextPage);
-        });
-
-    } while(nextPage)
-    
-    console.log('length'+results.length);
-    res.send(results);
-
-
-});
-
-
-router.post('/googleApiGetId', async (req, res) => {
-    console.log(req.body);
-
-    let input = req.body;
-
-    const value = {
-        place_id : input.id,
-        name : input.name,
-        lat : input.location.lat,
-        lng : input.location.lng,
-        rating : input.rating,
-        address : input.addr,
-        photo : input.photo,
-        url : input.url,
-        icon : input.icon,
-        types : input.types,
-        place_key : 0,
-    };
-
-    const insert = 'INSERT INTO places SET ?';
-
-    await queryPool(insert,value);
-    console.log('finish');
-
-});
-
-
-router.get('/recommendation/:id', async (req, res) => {
+const recommendation = async (req, res) => {
 
     let name = req.params.id;
     console.log(name);
@@ -223,7 +157,7 @@ router.get('/recommendation/:id', async (req, res) => {
         res.status(200).send({ data: simResult });
     } 
     
-});
+};
 
 
 function getDistance(lat1, lng1, lat2, lng2) {
@@ -264,4 +198,10 @@ function permutateWithoutRepetitions(permutationOptions) {
     return permutations;
 }
 
-module.exports = router;
+// module.exports = router;
+module.exports = {
+    getIndexOption,
+    getNearOption,
+    optimization,
+    recommendation
+};

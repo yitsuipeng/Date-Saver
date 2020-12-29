@@ -31,16 +31,6 @@ const pool  = mysql.createPool({
     database        : 'project'
 });
 
-// lack of release of the connections
-// pool.getConnection((err) => {
-
-//     if (err) {
-//         throw err;
-//     }
-//     console.log('queryPool connected');
-// });
-
-
 function intoSql (queryType, condition) {
     return new Promise((resolve, reject) => {
         traditional.query(queryType, condition, (err, result) => {
@@ -52,6 +42,7 @@ function intoSql (queryType, condition) {
 
 const queryPool = function (queryType, condition) {
     return new Promise((resolve, reject) => {
+        
         pool.query(queryType, condition, (err, result, fields) => {
             if (err) reject(err);
             resolve(result);
@@ -60,13 +51,3 @@ const queryPool = function (queryType, condition) {
 };
 
 module.exports = {db,queryPool,intoSql,pool};
-
-// const mysql = require('mysql');
-// const connectConfig = require('./db');
-// const db = mysql.createConnection(connectConfig);
-// db.connect((err) => {
-//     if (err) {
-//         throw err;
-//     }
-//     console.log('mysql-product_list connected');
-// });

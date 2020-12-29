@@ -22,7 +22,7 @@ app.set('json spaces', 2);
 
 
 //connect to other js files
-app.use('/api/1.0', require('./routes/controller'));
+app.use('/api/1.0', require('./routes/routers'));
 app.use('/user', require('./routes/user'));
 
 
