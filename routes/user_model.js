@@ -8,80 +8,46 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { upload,verifyToken } = require('./util');
 const validator = require('validator');
-const User = require('./user_model');
 
-const signup = async (req, res) => {
-    let {name} = req.body;
-    const {email, password} = req.body;
+const signUp = async (name, email, password) => { //寫好了不用改了
 
-    if(!name || !email || !password) {
-        res.status(400).send({error:'請完成所有欄位'});
-        return;
+    try {
+
+        const emails = await queryPool('SELECT email FROM users WHERE email = ?', [email]);
+        if (emails.length > 0){
+            return {error: '此email已註冊，請登入或使用其他email'};
+        }
+
+        const hash = crypto.createHash('sha256');
+        const userInfo = {
+            name: name,
+            email: email,
+            password: hash.update(password).digest('hex'),
+            picture: 'https://d2cw5pt7i47jz6.cloudfront.net/date-saver/users/unnamed.jpg',
+            provider: 'native',
+        };
+        const queryStr = 'INSERT INTO users SET ?';
+
+        const result = await query(queryStr, userInfo);
+        userInfo.id = result.insertId;
+
+        let payload = { id: userInfo.id, 
+                        name: userInfo.name, 
+                        email: userInfo.email, 
+                        picture: userInfo.picture
+                    };
+        
+        let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+
+        return {token};
+    } catch (error) {
+
+        return {error};
     }
 
-    if (!validator.isEmail(email)) {
-        res.status(400).send({error:'email 格式錯誤'});
-        return;
-    }
+}
 
-    name = validator.escape(name);
-
-    const result = await User.signUp(name, email, password);
-    if (result.error) {
-        res.status(403).send({error: result.error});
-        return;
-    }
-
-    const {token} = result;
-    if (!token) {
-        res.status(500).send({error: '系統錯誤，請稍後再試'});
-        return;
-    }
-
-    res.status(200).send( {data: { access_token: token, username: name }});
-
-    // const hash = crypto.createHash('sha256');
-    // const userInfo = {
-    //     name: req.body.name,
-    //     email: req.body.email,
-    //     password: hash.update(req.body.password).digest('hex'),
-    //     picture: 'https://d2cw5pt7i47jz6.cloudfront.net/date-saver/users/unnamed.jpg',
-    //     provider: 'native',
-    // };
-
-    // const sql = `SELECT email FROM users WHERE email = '${req.body.email}';`;
-    // const condition = null;
-
-    // let checkDuplicate = await queryPool(sql, condition);
-
-    // if (checkDuplicate.length > 0) { // duplicate email
-    //     console.log('duplicate');
-    //     res.status(403).send({ data: '此email已註冊，請登入或使用其他email'});
-
-    // } else { // insert user info
-    //     let insertResult = await queryPool('INSERT INTO users SET ?', userInfo);
-    //     if (insertResult) {
-            
-    //         let payload = { id: insertResult.insertId, 
-    //                         name: userInfo.name, 
-    //                         email: userInfo.email, 
-    //                         picture: userInfo.picture
-    //                     };
-
-    //         console.log(payload);
-
-    //         let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
-
-    //         res.status(200).send( {data: { access_token: token, username: userInfo.name }});
-
-    //     } else {
-    //         res.status(500).send({ data: '系統錯誤，請稍後重試一次'});
-    //     }
-    // }
-
-};
-
-const signModel = async (req, res) => {
+const signIn = async (req, res) => {
 
     console.log(req.body);
     if (req.body.provider == 'native') {
@@ -190,115 +156,96 @@ const signModel = async (req, res) => {
 };
 
 const nativeSignIn = async (email, password) => {
-    if(!email || !password){
-        return {error: '請完成所有欄位', status: 400};
-    }
-
     try {
-        return await User.nativeSignIn(email, password);
+        const hash = crypto.createHash('sha256');
+        const hashPassword = hash.update(password).digest('hex');
+        const users = await queryPool('SELECT * FROM users WHERE email = ?', [email]);
+        const user = users[0];
+
+        if (users.length > 0) { // email exist
+            if (user.password == hashPassword && user.provider == "native") { // password correct
+
+                const payload = { id: user.id, 
+                    name: user.name, 
+                    email: user.email, 
+                    picture: user.picture
+                };
+
+                const token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+                const username = payload.name;
+
+                return {token, username};
+
+            } else if (user.provider == "facebook"){
+                return { error: '帳號已使用，請改為facebook登入'};
+
+            } else { // password wrong
+                return { error: '密碼錯誤'};
+            }
+            
+        } else { // email not exist
+            return { error: '帳號不存在，請註冊'};
+        }
+
     } catch (error) {
         return {error};
     }
 };
 
-const facebookSignIn = async (accessToken) => {
-    if (!accessToken) {
-        return {error: '登入錯誤', status: 400};
-    }
-
+const getFacebookProfile = async function(accessToken){
     try {
-        const profile = await User.getFacebookProfile(accessToken);
-        const {id, name, email} = profile;
+        const res = await axios.get(`https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`);
+        return res.data;
+    } catch (e) {
+        console.log(e);
+        throw('授權失敗');
+    }
+};
 
-        if(!id || !name || !email){
-            return {error: '授權失敗'};
+const facebookSignIn = async (id, name, email) => {
+    try {
+
+        let userInfo = {
+            provider: 'facebook',
+            email: email,
+            name: name,
+            picture:'https://graph.facebook.com/' + id + '/picture?type=large',
+        };
+
+        const users = await queryPool(`SELECT id FROM users WHERE email = ? AND provider = 'facebook'`, [email]);
+
+        let userId;
+        if (users.length === 0) { // Insert new user
+            const queryStr = 'INSERT INTO users SET ?';
+            const result = await queryPool(queryStr, userInfo);
+            userId = result.insertId;
+        } else { // Update existed user
+            userId = users[0].id;
+
         }
 
-        return await User.facebookSignIn(id, name, email);
+        const payload = { 
+            id: userId, 
+            name: userInfo.name, 
+            email: userInfo.email, 
+            picture: userInfo.picture
+        };
+
+        const token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+        const username = userInfo.name;
+
+        return {token,username};
     } catch (error) {
-        return {error: error};
+
+        return {error};
     }
-};
-
-const signin = async (req, res) => {
-    const data = req.body;
-
-    let result;
-    switch (data.provider) {
-        case 'native':
-            result = await nativeSignIn(data.email, data.password);
-            break;
-        case 'facebook':
-            result = await facebookSignIn(data.access_token);
-            break;
-        default:
-            result = {error: '輸入錯誤'};
-    }
-
-    if (result.error) {
-        const status_code = result.status ? result.status : 403;
-        res.status(status_code).send({error: result.error});
-        return;
-    }
-
-    const {token,username} = result;
-    if (!username) {
-        res.status(500).send({error: '系統錯誤，請稍後再試'});
-        return;
-    }
-
-    res.status(200).send( {data: { access_token: token, username: username }});
-};
-
-// profile
-const profile = async(req, res) => {
-
-    let sql = `SELECT * FROM orders WHERE user_id = '${req.token.id}';`;
-    let condition = null;
-
-    let orderResult = await queryPool(sql, condition);
-    console.log(orderResult);
-    res.status(200).send({ data: {user:req.token, order:orderResult}});
-
-};
-
-// planning
-const verifyUser = async (req, res) => {
-    res.status(200).send({ data: {access_token:req.token}});
-};
-
-// update order image
-const uploadShares = async (req, res) => {
-
-    let sql = `UPDATE orders SET ? WHERE id=${req.body.order_id}`;
-    let condition = {
-        photo: req.file.key.replace("date-saver/shares/",""),
-        comment: req.body.story
-    };
-
-    let orderResult = await queryPool(sql, condition);
-
-    res.redirect('/profile.html');
-
-};
-
-// hot
-const getHotOrders = async (req, res) => {
-
-    let sql = `SELECT * FROM orders WHERE comment IS NOT NULL ORDER BY view DESC;`;
-    let condition = null;
-
-    let orderResult = await queryPool(sql, condition);
-    res.status(200).send({ data: orderResult});
-
-
 };
 
 module.exports = {
-    signup,
-    signin,
-    profile,
-    verifyUser,
-    uploadShares,
-    getHotOrders
+    signUp,
+    signIn,
+    nativeSignIn,
+    getFacebookProfile,
+    facebookSignIn,
+
 };

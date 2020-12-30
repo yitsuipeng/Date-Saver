@@ -36,140 +36,79 @@ let inInputEmail = document.querySelector('#inInputEmail');
 let inInputPassword = document.querySelector('#inInputPassword');
 
 upButton.addEventListener('click',function(){ //新增項目
-    if(!upInputName.value||!upInputPassword.value||!upInputEmail.value){
-        Swal.fire({
-            icon: 'warning',
-            title: '哎呀',
-            text: '請完成全部欄位',
-            confirmButtonColor: '#ff6863'
-        });
-    }else{
-        console.log('signup info complete');
 
-        fetch('api/1.0/signup', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-                }),
-            body:JSON.stringify({'name':upInputName.value,
-            'email':upInputEmail.value,
-            'password':upInputPassword.value
-        })})
-        // .then(res => res.json())
-        .then(res => res.json())
-        .then(result => {
-            console.log(result);
-            if(result.data.access_token){
+    fetchAPI('signup', {
+        'name':upInputName.value,
+        'email':upInputEmail.value,
+        'password':upInputPassword.value
+    });
+    // fetch('api/1.0/signup', {
+    //     method: 'POST',
+    //     headers: new Headers({
+    //         'Content-Type': 'application/json'
+    //         }),
+    //     body:JSON.stringify({'name':upInputName.value,
+    //     'email':upInputEmail.value,
+    //     'password':upInputPassword.value
+    // })})
+    // .then(res => res.json())
+    // .then(result => {
+    //     console.log(result);
+    //     if(result.data){
 
-                window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                successAlert(result.data.username);
-                
-            }else{
-                Swal.fire({
-                    icon: 'error',
-                    title: '哎呀',
-                    text: result.data,
-                    confirmButtonColor: '#ff6863'
-                });
-            }
-            console.log('Success:', result);
-            return result;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            return error;
-        })
-    }   
+    //         window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
+    //         successAlert(result.data.username);
+            
+    //     }else{
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: '哎呀',
+    //             text: result.error,
+    //             confirmButtonColor: '#ff6863'
+    //         });
+    //     }
+    //     return result;
+    // })
+    // .catch(error => {
+    //     Swal.fire({
+    //         icon: 'error',
+    //         title: '哎呀',
+    //         text: error,
+    //         confirmButtonColor: '#ff6863'
+    //     });
+    //     return error;
+    // })
+  
 });
 
 inButton.addEventListener('click',function(){ //新增項目
-    if(!inInputPassword.value||!inInputEmail.value){
-        Swal.fire({
-            icon: 'warning',
-            title: '哎呀',
-            text: '請完成全部欄位',
-            confirmButtonColor: '#ff6863'
-        });
-    }else{
-        console.log('signin info complete');
 
-        fetch('api/1.0/signin', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-                }),
-            body:JSON.stringify({'provider':'native',
-            'email':inInputEmail.value,
-            'password':inInputPassword.value
-        })})
-        .then(res => res.json())
-        .then(result => {
+    fetchAPI('signin', {
+        'provider':'native',
+        'email':inInputEmail.value,
+        'password':inInputPassword.value
+    });
 
-            if(result.data.access_token){
-
-                window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                successAlert(result.data.username);
-
-            }else{
-                Swal.fire({
-                    icon: 'error',
-                    title: '哎呀',
-                    text: result.data,
-                    confirmButtonColor: '#ff6863'
-                });
-            }
-            console.log('Success:', result);
-            return result;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            return error;
-        })
-    }   
 });
 
 
 // facebook
 function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
 
-    console.log(response.status);                   // The current login status of the person.
     if (response.status === 'connected') {   // Logged into your webpage and Facebook.
         console.log(response.authResponse.accessToken);
 
-        fetch('api/1.0/signin', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-                }),
-            body:JSON.stringify({'provider':'facebook',
-            'access_token':response.authResponse.accessToken
-        })})
-        .then(res => res.json())
-        .then(result => {
-            if(result.data.access_token){
-
-                window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                successAlert(result.data.username);
-
-            }else{
-                Swal.fire({
-                    icon: 'error',
-                    title: '哎呀',
-                    text: result.data,
-                    confirmButtonColor: '#ff6863'
-                });
-            }
-            console.log('Success:', result);
-            return result;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            return error;
-        })
-
+        fetchAPI('signin',{'provider':'facebook',
+        'access_token':response.authResponse.accessToken
+        });
 
     } else {                                 // Not logged into your webpage or we are unable to tell.
-        console.log('need to login');
+        Swal.fire({
+            icon: 'error',
+            title: '哎呀',
+            text: 'Facebook登入錯誤',
+            confirmButtonColor: '#ff6863'
+        });
     }
 }
 
@@ -204,18 +143,41 @@ function successAlert(name){
 
 }
 
-function warningAlert(warning){
+function fetchAPI(api,body){
 
-    Swal.fire({
-        title: '哎呀',
-        text: warning,
-        icon: 'warning',
-        showConfirmButton: false,
-        timer: 1500
-      }).then(()=>{
-             
-        window.location.replace("sign.html");
-      });
+    fetch('api/1.0/'+api, {
+        method: 'POST',
+        headers: new Headers({
+            'Content-Type': 'application/json'
+            }),
+        body:JSON.stringify(body)})
+    .then(res => res.json())
+    .then(result => {
+        console.log(result);
+        if(result.data){
+
+            window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
+            successAlert(result.data.username);
+            
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: '哎呀',
+                text: result.error,
+                confirmButtonColor: '#ff6863'
+            });
+        }
+        return result;
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: '哎呀',
+            text: error,
+            confirmButtonColor: '#ff6863'
+        });
+        return error;
+    })
 
 }
 
