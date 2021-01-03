@@ -1,13 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');
-const router = express.Router();
-const axios = require('axios');
 const _ = require('lodash');
 const { db,queryPool,intoSql } = require('./db');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const { upload,verifyToken } = require('./util');
+const Main = require('./planning_model');
 
 
 // index
@@ -49,33 +45,33 @@ const getIndexOption = async (req, res) => {
 // planning
 const getNearOption = async (req, res) => {
 
-    let show = JSON.parse(req.params.location);
-    let lat = show.lat;
-    let lng = show.lng;
-    let final = { name:"", nlat: 1, elong: 1, distance:10000000000 };
-    
-    let near = `SELECT name, lat, lng, place_id, url, photo, address, place_key FROM places WHERE place_key IS NOT NULL;`;
-    let nearResult = await queryPool(near,null);
+    try {
+        const show = JSON.parse(req.params.location);
+        const lat = show.lat;
+        const lng = show.lng;
+        let final = { name:"", nlat: 1, elong: 1, distance:10000000000 };
+        
+        let nearResult = await Main.getNearOption();
 
-    await nearResult.sort((a, b) => {
-        return (getDistance(a.lat, a.lng, lat, lng) - getDistance(b.lat, b.lng, lat, lng));
-    });
+        await nearResult.sort((a, b) => {
+            return (getDistance(a.lat, a.lng, lat, lng) - getDistance(b.lat, b.lng, lat, lng));
+        });
 
-    let suggest = {
-        center:final,
-        nearSite: nearResult.slice(0,30),
-    
-    };
+        let suggest = {
+            center:final,
+            nearSite: nearResult.slice(0,20),
+        };
 
-    console.log(suggest);
-    res.send(suggest);
+        res.status(200).send(suggest);
 
+    } catch (error) {
+        res.status(400).send({error: '系統錯誤，請稍後再試'});
+        return;
+    }
 
 };
 
 const optimization = async (req, res) => {
-
-    console.log(req.body);
 
     let matrixDistance = [];
     for (let x of req.body) {
@@ -85,7 +81,6 @@ const optimization = async (req, res) => {
         }
         matrixDistance.push(eachDis);
     }
-    console.log(matrixDistance);
 
     let index = []; // [0,1,2,3,4]
     for (let x in req.body) {
@@ -94,7 +89,6 @@ const optimization = async (req, res) => {
 
     let matrixIndex = permutateWithoutRepetitions(index).filter(x => x[0] == 0 );
 
-    console.log(index);
     console.log(matrixIndex.length);
 
     let optimal = {
@@ -118,18 +112,16 @@ const optimization = async (req, res) => {
         output.push(req.body[x]);
     }
     
-    res.send(output);
+    res.status(200).send(output);
 
 };
 
 const recommendation = async (req, res) => {
 
-    let name = req.params.id;
+    const name = req.params.id;
     console.log(name);
-    
-    let sql = `SELECT * FROM cf_index INNER JOIN places ON cf_index.second = places.place_id where first = '${req.params.id}' AND sim != 0 ;`;
-    let simQuery = await queryPool(sql, null);
 
+    let simQuery = await Main.checkMatrix(name);
 
     if(simQuery.length==0){
         res.status(200).send({sorry:"no recommend"});
@@ -147,59 +139,54 @@ const recommendation = async (req, res) => {
 
 const savePlanning = async (req, res) => {
 
-    console.log(req.body);
-    console.log(req.token);
+    const token = req.token;
+    const planDetails = req.body.plan;
+    console.log(token);
 
-    const orderInfo = {
-        user_id: req.token.id,
-        details: JSON.stringify(req.body.plan.schedule),
-        total_duration: req.body.plan.totalTime,
-        total_distance: req.body.plan.totalDistance,
-        date: req.body.plan.startDate,
-        name: req.body.plan.name,
-        view: 0
-    };
+    try{
 
-    let insertResult = await queryPool('INSERT INTO orders SET ?', orderInfo);
-    let places = await queryPool('SELECT place_id FROM places', null);
-
-    for(let x of req.body.plan.schedule){
-        let same = 0;
-        for(let y of places){
-            if(x.place_id == y.place_id){
-                same = 1;
+        const orderInfo = {
+            user_id: token.id,
+            details: JSON.stringify(planDetails.schedule),
+            total_duration: planDetails.totalTime,
+            total_distance: planDetails.totalDistance,
+            date: planDetails.startDate,
+            name: planDetails.name,
+            view: 0
+        };
+    
+        await Main.saveOrder(orderInfo);
+        const places = await Main.checkNewPlace();
+        let newSiteArray = [];
+    
+        for(let x of planDetails.schedule){
+            let same = 0;
+            for(let y of places){
+                if(x.place_id == y.place_id){
+                    same = 1;
+                }
+            }
+            if (same==0){
+                let newSiteDetails = [x.url, x.place_id, x.location.lat, x.location.lng, x.address, x.name, x.rating];
+                newSiteArray.push(newSiteDetails);
+    
             }
         }
-        if (same==0){
-            let newSiteDetails = {
-                url: x.url,
-                place_id: x.place_id,
-                lat: x.location.lat,
-                lng: x.location.lng,
-                address: x.address,
-                name: x.name,
-                rating: x.rating,
-            }
 
-            let newSite = await queryPool('INSERT INTO places SET ?', newSiteDetails);
-            console.log(newSite);
-        }
-    }
-
-    await collaborativeFiltering();
-
-    if (insertResult) {
+        await Main.createNewPlace(newSiteArray);
+        await Main.collaborativeFiltering();
         console.log('succeed');
 
         res.status(200).send( {success: '儲存成功，祝你一路順風' });
 
-    } else {
+    }catch (error){
+        console.log(error);
         res.status(500).send({ error: '系統錯誤，請稍後重試一次'});
     }
 
 };
 
-function getDistance(lat1, lng1, lat2, lng2) {
+const getDistance = (lat1, lng1, lat2, lng2) => {
     var radLat1 = lat1 * Math.PI / 180.0;
     var radLat2 = lat2 * Math.PI / 180.0;
     var a = radLat1 - radLat2;
@@ -210,7 +197,7 @@ function getDistance(lat1, lng1, lat2, lng2) {
     return s  // km
 }
 
-function permutateWithoutRepetitions(permutationOptions) {
+const permutateWithoutRepetitions = (permutationOptions) => {
     if (permutationOptions.length === 1) {
       return [permutationOptions];
     }
@@ -237,66 +224,11 @@ function permutateWithoutRepetitions(permutationOptions) {
     return permutations;
 }
 
-async function collaborativeFiltering(){
-    let sql = `SELECT details FROM orders;`;
-    let orderHistory = await queryPool(sql, null);
-    let newArray = [];
-    let ordersList = orderHistory.flatMap(p => JSON.parse(p.details)).map(x => x.place_id);
-    
-    for(let x of orderHistory){
-        x = JSON.parse(x.details);
-        let z = x.map(y => y.place_id);
-        newArray.push(z);
-    }
 
-    console.log(ordersList.length);
-    let index = {};
-
-    for(let i=0; i<ordersList.length; i++){
-        if(!index[ordersList[i]]){
-            index[ordersList[i]] = 0;
-        }
-        index[ordersList[i]] += 1;
-    }
-
-    let n = Object.keys(index);
-    console.log(n.length);
-
-    let simArray = [];
-    for(let i of n) {
-        for(let j of n){
-            let first = [i,j];
-            simArray.push(first);
-        }   
-    }
-    console.log(simArray.length);
-
-    for(let x of simArray){
-        if(x[0]==x[1]){
-            x.push(1);
-        }else{
-            let child = 0;
-            for(let y of newArray){
-                let count = 0;
-                for(let z of y){
-                    if(z==x[0] || z==x[1]){
-                        count += 1;
-                    }
-                }
-                if(count==2){
-                    child += 1;
-                }
-            }
-            x.push(child/(index[x[0]]+index[x[1]]-child));
-        }
-    }
-    console.log(simArray);
-
-    let clearIndex = await queryPool('DELETE FROM cf_index',null);
-    let refreshIndex = await queryPool('INSERT INTO cf_index (first, second, sim) VALUES ?',[simArray]);
-    console.log(refreshIndex.affectedRows);
-    
-}
+// planning
+const verifyUser = async (req, res) => {
+    res.status(200).send({ data: {access_token:req.token}});
+};
 
 // module.exports = router;
 module.exports = {
@@ -304,5 +236,6 @@ module.exports = {
     getNearOption,
     optimization,
     recommendation,
-    savePlanning
+    savePlanning,
+    verifyUser
 };

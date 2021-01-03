@@ -39,7 +39,7 @@ const verifyToken = (req, res, next) => {
         jwt.verify(bearerToken, process.env.secretAccessKey, (err, data) => {
             if(err){
                 console.log(err);
-                res.status(403).send({data:'登入過期，請重新登入'});
+                res.status(403).send({error:'登入過期，請重新登入'});
             } else {
                 console.log(data);
                 req.token = data;
@@ -48,7 +48,7 @@ const verifyToken = (req, res, next) => {
         });
         
     } else {
-        res.status(400).send({data:'請先登入喔'});
+        res.status(400).send({error:'請先登入喔'});
     }
 }
 

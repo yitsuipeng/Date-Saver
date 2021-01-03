@@ -8,9 +8,13 @@ const {
     getNearOption,
     optimization,
     recommendation,
-    savePlanning
+    savePlanning,
+    verifyUser
     
 } = require('./planning_controller');
+
+router.route('/verifyUser')
+    .get(verifyToken, wrapAsync(verifyUser));
 
 router.route('/getIndexOption')
     .get(wrapAsync(getIndexOption));
@@ -25,32 +29,27 @@ router.route('/recommendation/:id')
     .get(wrapAsync(recommendation));
 
 router.route('/savePlanning')
-    .post(wrapAsync(savePlanning),verifyToken);
+    .post(verifyToken, wrapAsync(savePlanning));
 
 
-
+    
 const {
-    signup,
-    signin,
-    profile,
-    verifyUser,
+    signUp,
+    signIn,
+    getProfile,
     uploadShares,
     getHotOrders,
-    addView,
     
 } = require('./user_controller');
 
-router.route('/signup')
-    .post(wrapAsync(signup));
+router.route('/signUp')
+    .post(wrapAsync(signUp));
 
-router.route('/signin')
-    .post(wrapAsync(signin));
+router.route('/signIn')
+    .post(wrapAsync(signIn));
 
-router.route('/profile')
-    .post(verifyToken, wrapAsync(profile));
-
-router.route('/verifyUser')
-    .get(verifyToken, wrapAsync(verifyUser));
+router.route('/getProfile')
+    .get(verifyToken, wrapAsync(getProfile));
 
 router.route('/uploadShares')
     .post(upload.single('main_image'), wrapAsync(uploadShares));

@@ -3,7 +3,7 @@ const host = 'd2cw5pt7i47jz6.cloudfront.net';
 const token = window.localStorage.getItem('Authorization');
 
 if(token){
-    fetch(`user/verifyUser`, {
+    fetch(`api/1.0/verifyUser`, {
         method: 'GET',
         headers: new Headers({
             'Authorization': token
@@ -12,12 +12,9 @@ if(token){
     .then(res => res.json())
     .then(res => {
     if(res.data.access_token){
+        successAlert(res.data.username);
         window.location.replace("profile.html");
-    }
-    else{
-        console.log(res)
-    }
-    })
+    }})
     .catch(error => {
         console.error('Error:', error);
         alert('系統錯誤,請稍後再試');
@@ -42,42 +39,6 @@ upButton.addEventListener('click',function(){ //新增項目
         'email':upInputEmail.value,
         'password':upInputPassword.value
     });
-    // fetch('api/1.0/signup', {
-    //     method: 'POST',
-    //     headers: new Headers({
-    //         'Content-Type': 'application/json'
-    //         }),
-    //     body:JSON.stringify({'name':upInputName.value,
-    //     'email':upInputEmail.value,
-    //     'password':upInputPassword.value
-    // })})
-    // .then(res => res.json())
-    // .then(result => {
-    //     console.log(result);
-    //     if(result.data){
-
-    //         window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-    //         successAlert(result.data.username);
-            
-    //     }else{
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: '哎呀',
-    //             text: result.error,
-    //             confirmButtonColor: '#ff6863'
-    //         });
-    //     }
-    //     return result;
-    // })
-    // .catch(error => {
-    //     Swal.fire({
-    //         icon: 'error',
-    //         title: '哎呀',
-    //         text: error,
-    //         confirmButtonColor: '#ff6863'
-    //     });
-    //     return error;
-    // })
   
 });
 
@@ -153,7 +114,7 @@ function fetchAPI(api,body){
         body:JSON.stringify(body)})
     .then(res => res.json())
     .then(result => {
-        console.log(result);
+
         if(result.data){
 
             window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);

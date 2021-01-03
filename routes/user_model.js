@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const { upload,verifyToken } = require('./util');
 const validator = require('validator');
 
-const signUp = async (name, email, password) => { //寫好了不用改了
+const signUp = async (name, email, password) => {
 
     try {
 
@@ -47,7 +47,7 @@ const signUp = async (name, email, password) => { //寫好了不用改了
 
 }
 
-const signIn = async (req, res) => {
+const signIn = async (req, res) => { //dump if everything is okay
 
     console.log(req.body);
     if (req.body.provider == 'native') {
@@ -67,6 +67,7 @@ const signIn = async (req, res) => {
                     email: checkExist[0].email, 
                     picture: checkExist[0].picture
                 };
+                console.log(payload);
 
                 let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
 
@@ -131,14 +132,14 @@ const signIn = async (req, res) => {
                     let insertResult = queryPool('INSERT INTO users SET ?', userInfo);
                     if (insertResult) {
             
-                        let payload = { id: insertResult.insertId, 
+                        const payload = { id: insertResult.insertId, 
                                         name: userInfo.name, 
                                         email: userInfo.email, 
                                         picture: userInfo.picture
                                     };
                         console.log(payload);
 
-                        let token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
+                        const token = jwt.sign(payload, process.env.secretAccessKey, { expiresIn: '1 day', noTimestamp:true });
                         
                         console.log('facebook sign up');
                         res.status(200).send( { data: { access_token: token, username: userInfo.name }});
@@ -198,7 +199,7 @@ const getFacebookProfile = async function(accessToken){
         return res.data;
     } catch (e) {
         console.log(e);
-        throw('授權失敗');
+        throw('Permissions Error: facebook access token is wrong');
     }
 };
 
@@ -241,11 +242,32 @@ const facebookSignIn = async (id, name, email) => {
     }
 };
 
+const getProfile = async (id) => {
+    return queryPool('SELECT * FROM orders WHERE user_id = ?', [id]);
+}
+
+const uploadShares = async (orderId, photoName, comment) => {
+
+    try {
+        const sql = `UPDATE orders SET ? WHERE id=${orderId}`;
+        const condition = {
+            photo: photoName.replace("date-saver/shares/",""),
+            comment: comment
+        };
+
+        return await queryPool(sql, condition);
+    } catch (error) {
+        return {error: error};
+    }
+
+};
+
 module.exports = {
     signUp,
     signIn,
     nativeSignIn,
     getFacebookProfile,
     facebookSignIn,
-
+    getProfile,
+    uploadShares
 };

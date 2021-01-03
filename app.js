@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const socketView = require('./routes/socket');
+const {socketView} = require('./routes/planning_model');
 const app = express();
 
 
@@ -33,6 +33,6 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Internal Server Error');
 });
 
-http.listen(3000, () => {
+http.listen(3001, () => {
     console.log('port: 3001');
 });

@@ -4,9 +4,8 @@ let data;
 let orders={};
 
 if(token){
-    console.log('there is a token');
 
-    fetch('api/1.0/profile', {
+    fetch('api/1.0/getProfile', {
         method: 'GET',
         headers: new Headers({
         'Authorization': token
@@ -43,9 +42,11 @@ if(token){
             // document.getElementById('user-picture').appendChild(picture);
 
         }else{
-            alert(result.data);
-            window.localStorage.removeItem('Authorization');
-            window.location.replace("sign.html");
+
+            warningAlert(result);
+            // alert(result.data);
+            // window.localStorage.removeItem('Authorization');
+            // window.location.replace("sign.html");
         }
 
     })
@@ -130,7 +131,7 @@ function warningAlert(warning){
         showConfirmButton: false,
         timer: 1500
     }).then(()=>{
-             
+        window.localStorage.removeItem('Authorization');
         window.location.replace("sign.html");
     });
 
