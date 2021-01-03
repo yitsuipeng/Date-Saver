@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { queryPool,intoSql } = require('./db');
+const { queryPool } = require('./db');
 const validator = require('validator');
 const User = require('./user_model');
 
@@ -22,6 +22,7 @@ const signUp = async (req, res) => {
 
     const result = await User.signUp(name, email, password);
     if (result.error) {
+        console.log(result.error);
         res.status(403).send({error: result.error});
         return;
     }
@@ -72,14 +73,14 @@ const signIn = async (req, res) => {
 
     let result;
     switch (data.provider) {
-        case 'native':
-            result = await nativeSignIn(data.email, data.password);
-            break;
-        case 'facebook':
-            result = await facebookSignIn(data.access_token);
-            break;
-        default:
-            result = {error: '輸入錯誤'};
+    case 'native':
+        result = await nativeSignIn(data.email, data.password);
+        break;
+    case 'facebook':
+        result = await facebookSignIn(data.access_token);
+        break;
+    default:
+        result = {error: '輸入錯誤'};
     }
 
     if (result.error) {
@@ -132,12 +133,12 @@ const uploadShares = async (req, res) => {
 // hot
 const getHotOrders = async (req, res) => {
 
-    let sql = `SELECT * FROM orders WHERE comment IS NOT NULL ORDER BY view DESC;`;
-    let condition = null;
-
-    let orderResult = await queryPool(sql, condition);
-    res.status(200).send({ data: orderResult});
-
+    try {
+        let orderResult = await User.getHotOrders();
+        res.status(200).send({ data: orderResult});
+    } catch (error) {
+        return {error:error};
+    } 
 
 };
 

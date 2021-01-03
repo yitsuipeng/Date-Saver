@@ -51,10 +51,8 @@ if(token){
 
     })
     .catch(error => {
-        console.log(error);
-        alert(error);
-        // window.localStorage.removeItem('Authorization');
-        // window.location.replace("sign.html");
+        warningAlert('登入過期，請重新登入');
+
     })
 
 }

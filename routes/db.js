@@ -4,7 +4,7 @@ if (result.error) {
 }
 const mysql = require('mysql');
 
-// traditional db
+// original db
 const db =
     {
         host: result.parsed.DB_HOST,
@@ -13,8 +13,8 @@ const db =
         database: 'project'
     };
 
-const traditional = mysql.createConnection(db);
-traditional.connect((err) => {
+const original = mysql.createConnection(db);
+original.connect((err) => {
     if (err) {
         throw err;
     }
@@ -22,7 +22,7 @@ traditional.connect((err) => {
 });
 
 
-// pool
+// pool & test
 const pool  = mysql.createPool({
     connectionLimit : 10,
     host            : result.parsed.DB_HOST,
@@ -31,9 +31,17 @@ const pool  = mysql.createPool({
     database        : 'project'
 });
 
+const testPool  = mysql.createPool({
+    connectionLimit : 10,
+    host            : result.parsed.DB_HOST,
+    user            : result.parsed.DB_USER,
+    password        : result.parsed.DB_PASS,
+    database        : 'project_test'
+});
+
 function intoSql (queryType, condition) {
     return new Promise((resolve, reject) => {
-        traditional.query(queryType, condition, (err, result) => {
+        original.query(queryType, condition, (err, result) => {
             if (err) reject(err);
             resolve(result);
         });

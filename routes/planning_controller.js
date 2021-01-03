@@ -1,12 +1,8 @@
-require('dotenv').config();
-
-const express = require('express');
-const _ = require('lodash');
-const { db,queryPool,intoSql } = require('./db');
+const { queryPool } = require('./db');
 const Main = require('./planning_model');
 
 
-// index
+// index (not used then)
 const getIndexOption = async (req, res) => {
 
     let tagSql = `SELECT id,name,photo FROM tags ORDER BY id ASC;`;
@@ -65,7 +61,7 @@ const getNearOption = async (req, res) => {
         res.status(200).send(suggest);
 
     } catch (error) {
-        res.status(400).send({error: '系統錯誤，請稍後再試'});
+        res.status(400).send({error: '請稍後再試'});
         return;
     }
 
@@ -93,7 +89,7 @@ const optimization = async (req, res) => {
 
     let optimal = {
         permutation: "",
-        totalDistance: 1000}
+        totalDistance: 1000};
 
     for (var i=0; i<matrixIndex.length; i++) {
         let x = 0;
@@ -123,9 +119,9 @@ const recommendation = async (req, res) => {
 
     let simQuery = await Main.checkMatrix(name);
 
-    if(simQuery.length==0){
+    if (simQuery.length==0){
         res.status(200).send({sorry:"no recommend"});
-    }else{
+    } else {
         simQuery.sort((a, b) => {
             return (b.sim - a.sim);
         });
@@ -195,11 +191,11 @@ const getDistance = (lat1, lng1, lat2, lng2) => {
     s = s * 6378.137;
     s = Math.round(s * 10000) / 10000;
     return s  // km
-}
+};
 
 const permutateWithoutRepetitions = (permutationOptions) => {
     if (permutationOptions.length === 1) {
-      return [permutationOptions];
+        return [permutationOptions];
     }
   
     const permutations = [];
@@ -211,9 +207,9 @@ const permutateWithoutRepetitions = (permutationOptions) => {
     const firstOption = permutationOptions[0];
   
     for (let permIndex = 0; permIndex < smallerPermutations.length; permIndex += 1) {
-      const smallerPermutation = smallerPermutations[permIndex];
+        const smallerPermutation = smallerPermutations[permIndex];
   
-      // Insert first option into every possible position of smallerPermutation.
+        // Insert first option into every possible position of smallerPermutation.
         for (let positionIndex = 0; positionIndex <= smallerPermutation.length; positionIndex += 1) {
             const permutationPrefix = smallerPermutation.slice(0, positionIndex);
             const permutationSuffix = smallerPermutation.slice(positionIndex);
@@ -222,8 +218,7 @@ const permutateWithoutRepetitions = (permutationOptions) => {
     }
   
     return permutations;
-}
-
+};
 
 // planning
 const verifyUser = async (req, res) => {
