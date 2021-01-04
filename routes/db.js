@@ -21,6 +21,7 @@ original.connect((err) => {
     console.log('intoSql connected');
 });
 
+const dbStatus = 'project';
 
 // pool & test
 const pool  = mysql.createPool({
@@ -28,15 +29,7 @@ const pool  = mysql.createPool({
     host            : result.parsed.DB_HOST,
     user            : result.parsed.DB_USER,
     password        : result.parsed.DB_PASS,
-    database        : 'project'
-});
-
-const testPool  = mysql.createPool({
-    connectionLimit : 10,
-    host            : result.parsed.DB_HOST,
-    user            : result.parsed.DB_USER,
-    password        : result.parsed.DB_PASS,
-    database        : 'project_test'
+    database        : dbStatus
 });
 
 function intoSql (queryType, condition) {
@@ -58,4 +51,4 @@ const queryPool = function (queryType, condition) {
     });
 };
 
-module.exports = {db,queryPool,intoSql,pool};
+module.exports = {queryPool,intoSql,dbStatus};
