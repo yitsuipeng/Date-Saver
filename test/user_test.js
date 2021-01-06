@@ -13,12 +13,6 @@ chai.use(chaiHttp);
 const assert = chai.assert;
 const requester = chai.request(app).keepOpen();
 
-const userCredentials = {
-    provider: 'native',
-    email: 'test',
-    password: 'test'
-  }
-
 before(async () => {
     if (dbStatus !== 'project_test') {
         throw 'Not in test db';
@@ -128,7 +122,6 @@ describe('signin API', function() {
 
 });
 
-
 describe('signUp API', function() {
 
     it('sign up', async () => {
@@ -151,4 +144,70 @@ describe('signUp API', function() {
 
     });
 
+    it('sign up without name or email or password', async () => {
+        const user1 = {
+            email: 'arthur@gmail.com',
+            password: 'password'
+        };
+
+        const res1 = await requester
+            .post('/api/1.0/signUp')
+            .send(user1);
+
+        assert.equal(res1.statusCode, 400);
+
+        const user2 = {
+            name: 'arthur',
+            password: 'password'
+        };
+
+        const res2 = await requester
+            .post('/api/1.0/signUp')
+            .send(user2);
+
+        assert.equal(res2.statusCode, 400);
+
+        const user3 = {
+            name: 'arthur',
+            email: 'arthur@gmail.com',
+        };
+
+        const res3 = await requester
+            .post('/api/1.0/signUp')
+            .send(user3);
+
+        assert.equal(res3.statusCode, 400);
+    });
+
+    it('sign up with existed email', async () => {
+        const user = {
+            name: users[0].name,
+            email: users[0].email,
+            password: 'password'
+        };
+
+        const res = await requester
+            .post('/api/1.0/signUp')
+            .send(user);
+
+        assert.equal(res.status, 403);
+        assert.equal(res.body.error, '此email已註冊，請登入或使用其他email');
+    });
+
+    it('sign up with malicious email', async () => {
+        const user = {
+            name: users[0].name,
+            email: '<script>alert(1)</script>',
+            password: 'password'
+        };
+
+        const res = await requester
+            .post('/api/1.0/signUp')
+            .send(user);
+
+        assert.equal(res.status, 400);
+        assert.equal(res.body.error, 'email 格式錯誤');
+    });
+
 });
+
