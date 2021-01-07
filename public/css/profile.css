@@ -1,0 +1,86 @@
+.user_picture_border{
+    background-color: #ff6863;
+    padding: 10px;
+    border-radius: 50%;
+    margin: 0 auto;
+    width: 150px;
+    height: 150px;
+    /* position: absolute;
+    top: 13%;
+    left: 25%;
+    right: 25%; */
+}
+.user_picture_border .user_picture{
+    /* background-color: #ff6863; */
+    border: 2px solid;
+    border-color: #fff;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+#calendar {
+    max-width: 1100px;
+    margin: 40px auto;
+  }
+
+.profile{
+    background:url(https://d2cw5pt7i47jz6.cloudfront.net/date-saver/icons/profile.jpg) no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+.hotblog{
+    background:url(https://d2cw5pt7i47jz6.cloudfront.net/date-saver/icons/hot.jpg) no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+.imgimgimg{
+    object-fit: cover;
+    height: 250px;
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 5px;
+  top: 0;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

@@ -11,8 +11,8 @@ const host = 'd2cw5pt7i47jz6.cloudfront.net';
 const token = window.localStorage.getItem('Authorization');
 
 let plan = {
-    schedule: [],
     startPoint: {},
+    schedule: [],
     startDate: 0,
     totalTime:0,
     totalDistance:0,
@@ -110,29 +110,59 @@ dragula([document.getElementById('schedule')], {
 
 async function initMap() {
 
-  fetch(`user/verifyUser`, {
-    method: 'GET',
-    headers: new Headers({
+  if(token) {
+    fetch(`api/1.0/verifyUser`, {
+      method: 'GET',
+      headers: new Headers({
+      'Content-Type': 'application/json',
       'Authorization': token
+      })
     })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if(res.data){
-      console.log('enter success')
-    }
-    else{
-      console.log(res)
-      alert('請先登入喔');
-      window.location.replace("sign.html");
-    }
-  })
-  .catch(error => {
-      console.error('Error:', error);
-      alert('系統錯誤,請稍後再試');
-      return error;
-  });
+    .then(res => res.json())
+    .then(res => {
+  
+      if(!res.data.access_token){
 
+        Swal.fire({
+          title: '哎呀',
+          text: '請先登入喔',
+          icon: 'warning',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(()=>{
+               
+            window.location.replace("sign.html");
+        });
+
+      }else{
+
+        Swal.fire({
+          title: '溫馨小提示',
+          text: '輸入約會起點並按下搜尋，讓我們為你推薦下個景點',
+          confirmButtonColor: '#ff6863'
+
+        });
+      }
+  
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        return error;
+    });
+
+  } else {
+    Swal.fire({
+      title: '哎呀',
+      text: '請先登入喔',
+      icon: 'warning',
+      showConfirmButton: false,
+      timer: 1500
+    }).then(()=>{
+           
+            window.location.replace("sign.html");
+    });
+
+  }
     const searchAutocomplete = new google.maps.places.Autocomplete(
       document.getElementById('places-input'),{
         location: {lat:25.0591607,lng:121.5387777},
@@ -150,54 +180,44 @@ async function initMap() {
     searchAutocomplete.addListener('place_changed', () => {
     
       let place = searchAutocomplete.getPlace();
-      if (!place.geometry) {
-  
-          alert('沒有相符的地點喔 請更改' + place.name);
-      } else if (place.formatted_address.indexOf("北市")<0) {
-          alert('只限大台北地區喔, 謝謝~~');       
-      } else {
 
-        console.log(place);
-  
+      if (!place.geometry) {
+
+        warningAlert('沒有相符的地點喔');
+    
+      } else if (place.formatted_address.indexOf("北市")>0 || place.formatted_address.indexOf("Taipei")>0) {    
+
+        plan.startPoint = {};
         plan.startPoint.url = place.url,
         plan.startPoint.name = place.name;
         plan.startPoint.rating = place.rating;
         plan.startPoint.location = {lat:place.geometry.location.lat(),lng:place.geometry.location.lng()};
         plan.startPoint.address = place.formatted_address;
-        plan.startPoint.types = JSON.stringify(place.types);
+        // plan.startPoint.types = JSON.stringify(place.types);
         plan.startPoint.place_id = place.place_id;
           
-      }
+      } else {
+        
+        warningAlert('只限大台北地區喔，請見諒');
+
+      }   
     });
 
     document.getElementById('start').addEventListener('click', async () => {
-      if(plan.startPoint.name){
+      console.log();
+
+      if(document.getElementById('places-input').value.indexOf("北市")>0 || document.getElementById('places-input').value.indexOf("Taipei")>0){
 
         //清空
         hideMarkers(placeMarkers);
         hideMarkers(optionMarkers);
-        hideMarkers(markers);
-        markers = [];
         optionMarkers = [];
         placeMarkers = [];
         routeMarkers = [];
         interview = [];
-        selfChosen = {};
         options = {};
-        document.getElementById('schedule').innerHTML = "";
 
-
-        options[plan.startPoint.name] = plan.startPoint;  //到列印再存
-        marker = new google.maps.Marker({
-            position: plan.startPoint.location,
-            map: map,
-            animation: google.maps.Animation.bounce, // DROP掉下來、BOUNCE一直彈跳
-            // draggable: true, // true、false可否拖拉
-            title: plan.startPoint.name
-          });
-
-        markers.push(marker);
-
+        selfChosen[plan.startPoint.name] = plan.startPoint;  //到列印再存
 
         await fetch(`api/1.0/getNearOption/${JSON.stringify(plan.startPoint.location)}`, {
           method: 'GET',
@@ -245,8 +265,10 @@ async function initMap() {
     
             }
             let optionArray = Object.keys(options);
-            optionArray.shift();
-            createOptions(optionArray,document.getElementById('near-option'),null)
+            // optionArray.shift();
+            // createOptions(optionArray,document.getElementById('near-option'),null);
+            let sideOptionsArray = Object.values(options);
+            sideOptions(sideOptionsArray);
             showListings(optionMarkers);
             console.log(options);
     
@@ -256,33 +278,74 @@ async function initMap() {
             return error;
         });
 
-        addSchedule(document.getElementById('schedule'),plan.startPoint);
-        map.setCenter(plan.startPoint.location);
-        filterSelection("all");
+        marker = new google.maps.Marker({
+          position: plan.startPoint.location,
+          map: map,
+          animation: google.maps.Animation.bounce, // DROP掉下來、BOUNCE一直彈跳
+          // draggable: true, // true、false可否拖拉
+          title: plan.startPoint.name
+        });
+        markers.push(marker);
+
+        document.getElementById("recommend-site").innerHTML = "";
+        document.getElementById('self-chosen-site').innerHTML = "";
+        document.getElementById("interesting-distance").innerHTML = "";
+        document.getElementById("interesting-time").innerHTML = "";
         
+        addSchedule(document.getElementById('schedule'),plan.startPoint.name);
+        map.setCenter(plan.startPoint.location);
+        filterSelection("shop");
+        
+      }else{
+
+        warningAlert('地點好像有誤喔，請修正一下');
+
       }
     
     });
   
     // 監聽搜尋頁列出選項
-    document.getElementById('search-places').addEventListener('click', textSearchPlaces);
+    // document.getElementById('search-places').addEventListener('click', textSearchPlaces);
 
-    document.getElementById('near-option').addEventListener('click', (e) => {
+    // 嘗試
+    document.getElementById('sidebar').addEventListener('click', (e) => {
+
+      if(e.target.localName == 'a'){
+
+        document.getElementById("interesting-distance").innerHTML = "";
+        document.getElementById("interesting-time").innerHTML = "";
+        document.getElementById("recommend-site").innerHTML = "";
+        document.getElementById('self-chosen-site').innerHTML = "";
+
+        removeRoutes();
+        let pin = options[e.target.title];
+        showListings(optionMarkers);
+        bounceListings(map,optionMarkers,pin.name);
+        bounceListings(map,markers,pin.name);
+  
+        createBigCard(pin);
+      }
+
+    })
+
+    document.getElementById('near-option').addEventListener('click', (e) => { //這個已經無效了
+
       removeRoutes();
       let pin = options[e.target.title];
       showListings(optionMarkers);
       bounceListings(map,optionMarkers,pin.name);
+      bounceListings(map,markers,pin.name);
 
       createBigCard(pin);
 
-    })
+    });
 
     document.getElementById('self-chosen-site').addEventListener('click', (e) => {
       let pin = e.target;
 
       if(pin.className == 'plus'){
           let team = options[pin.parentNode.title]? options : selfChosen;
-          addSchedule(document.getElementById('schedule'),team[pin.parentNode.title]);
+          addSchedule(document.getElementById('schedule'),pin.parentNode.title);
           let newMarker = new google.maps.Marker({
               position: team[pin.parentNode.title].location,
               map: map,
@@ -290,23 +353,27 @@ async function initMap() {
               draggable: false, // true、false可否拖拉
               title: pin.parentNode.title,
           });
-          if(team == selfChosen){
-            options[pin.parentNode.title] = selfChosen[pin.parentNode.title];
+          if(team == options){
+            selfChosen[pin.parentNode.title] = options[pin.parentNode.title];
           }
       
           markers.push(newMarker);
           pin.parentNode.remove();
-          hideMarkers(placeMarkers);
+          // hideMarkers(placeMarkers);
           showListings(optionMarkers);
           showListings(markers);
+          console.log(selfChosen);
+
+          getRecommender(selfChosen[pin.parentNode.title].place_id);
           
       } else if(pin.className == 'drag-drop-item list-group-item'){
       }
 
-    })
+    });
 
     document.getElementById('schedule').addEventListener('click', (e) => {
       let pin = e.target;
+      plan.schedule = [];
 
       showListings(optionMarkers);
 
@@ -323,17 +390,23 @@ async function initMap() {
         bounceListings(map,markers,pin.title);
       }
 
-    })
+    });
 
     document.getElementById('optimize-schedule').addEventListener('click', async() => {
         let scheduleArrey = document.getElementById('schedule');
         console.log(scheduleArrey.children);
         let scheduleInput = [];
         for(let x of scheduleArrey.children){
-            scheduleInput.push(options[x.title]);
+            scheduleInput.push(selfChosen[x.title]);
         }
+        
+        if(scheduleInput.length>9){
 
-        await fetch('api/1.0/optimization', {
+          warningAlert('行程好像有點多，要不要刪掉一些呢?');
+
+        }else if(scheduleInput.length>1){
+
+          await fetch('api/1.0/optimization', {
                 method: 'POST',
                 headers: new Headers({
                 'Content-Type': 'application/json'
@@ -348,7 +421,15 @@ async function initMap() {
                 console.log(response);
                 refreshSchedule(response,document.getElementById('schedule'));
 
+                Swal.fire({
+                  icon: 'success',
+                  title: '完成',
+                  showConfirmButton: false,
+                  timer: 1500
+                });
+
             });
+        }
     });
 
     document.getElementById('make-schedule').addEventListener('click', async() => {
@@ -357,11 +438,13 @@ async function initMap() {
         removeRoutes();
         
         for(let x of scheduleArrey.children){
-            scheduleInput.push(options[x.title]);
+            scheduleInput.push(selfChosen[x.title]);
         }
 
-        if(scheduleInput.length<3){
-          alert('約會好像太短了,再多加一些回憶吧!');
+        if(scheduleInput.length<2){
+
+          warningAlert('約會好像太短了,再多加一些回憶吧!');
+                  
         }else{
           rankMarkers(scheduleInput);
 
@@ -375,11 +458,20 @@ async function initMap() {
             return window.setTimeout(( () => {
               document.getElementById("interesting-distance").innerHTML = '移動距離: ' + (plan.totalDistance/1000).toFixed(1) +'公里';
               document.getElementById("interesting-time").innerHTML = '移動時間: ' + turnTimeText(plan.totalTime)[0] + '小時 '+turnTimeText(plan.totalTime)[1]+'分鐘';
+              document.getElementById('self-chosen-site').innerHTML = `<br><ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul><br>`;
+
+              for(let i=1 ; i<plan.schedule.length ; i++){
+                  let content = `<ul><li><i class="fa fa-check-circle text-primary"></i> ${plan.schedule[i].name}</li><li> ${plan.schedule[i].address} </li><li> ${plan.schedule[i].mode} / ${plan.schedule[i].distance.text} / 約 ${plan.schedule[i].duration.text}</li></ul><br>`;
+                  document.getElementById('self-chosen-site').innerHTML += content;
+              }
 
             }), 1000);
           })
           .catch(error => {
-            alert('Error:', error);
+
+            warningAlert('系統忙碌中，請稍後再試');
+
+            console.log('Error:', error);
           });
 
         }
@@ -387,22 +479,24 @@ async function initMap() {
     });
 
     document.getElementById('save-schedule').addEventListener('click', () => {
-      if(!document.getElementById('date').value || !document.getElementById('name').value){
-        alert('請輸入約會日期跟旅程名稱喔!');
-      } else if(plan.totalTime ==0 || plan.totalDistance==0) {
-        alert('請先匯出路徑才能儲存旅程喔!');
+      if(plan.totalTime ==0 || plan.totalDistance==0){
+
+        warningAlert('請先匯出路徑再儲存喔!');
+
       } else {
-        plan.startDate = document.getElementById('date').value;
-        plan.name = document.getElementById('name').value;
-        document.getElementById("plan-name").innerHTML = plan.name;
-        document.getElementById("plan-date").innerHTML = plan.startDate;
-        document.getElementById("plan-distance").innerHTML = (plan.totalDistance/1000).toFixed(1) +'km';
-        document.getElementById("plan-time").innerHTML = turnTimeText(plan.totalTime)[0] + 'hr '+turnTimeText(plan.totalTime)[1]+'min';
-        document.getElementById("plan-details").innerHTML = `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul>`;
-        for(let i=1; i<plan.schedule.length; i++){
-          document.getElementById("plan-details").innerHTML += `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[i].name}</li><li>${plan.schedule[i].address}</li></ul>`;
-        }
+
+        // document.getElementById("plan-name").innerHTML = plan.name;
+        // document.getElementById("plan-date").innerHTML = plan.startDate;
+        // document.getElementById("plan-distance").innerHTML = (plan.totalDistance/1000).toFixed(1) +'km';
+        // document.getElementById("plan-time").innerHTML = turnTimeText(plan.totalTime)[0] + 'hr '+turnTimeText(plan.totalTime)[1]+'min';
+        // document.getElementById("plan-details").innerHTML = `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[0].name}</li><li>${plan.schedule[0].address}</li></ul>`;
+
+        // for(let i=1; i<plan.schedule.length; i++){
+        //   document.getElementById("plan-details").innerHTML += `<ul><li><i class="fa fa-check-circle text-primary"></i>${plan.schedule[i].name}</li><li>${plan.schedule[i].address}</li></ul>`;
+        // }
         document.getElementById("myModal").style.display = "block";
+        
+        console.log(plan);
       }
     });
 
@@ -418,12 +512,18 @@ async function initMap() {
 
     document.getElementById('done').addEventListener('click', async() => {
       if(!document.getElementById('date').value || !document.getElementById('name').value){
-        alert('請輸入約會日期跟旅程名稱喔!');
-      } else if(plan.totalTime ==0 || plan.totalDistance==0) {
-        alert('請先匯出路徑才能儲存旅程喔!');
-      } else {
 
-        fetch('user/savePlanning', {
+        warningAlert('請輸入約會日期跟旅程名稱喔!');
+
+      } else if(plan.totalTime ==0 || plan.totalDistance==0) {
+
+        warningAlert('請先匯出路徑才能儲存旅程喔!');
+
+      } else {
+        plan.startDate = document.getElementById('date').value;
+        plan.name = document.getElementById('name').value;
+
+        fetch('api/1.0/savePlanning', {
           method: 'POST',
           headers: new Headers({
               'Content-Type': 'application/json',
@@ -433,11 +533,30 @@ async function initMap() {
         })
         .then(res => res.json())
         .then(result => {
+            console.log(result);
             if(result.data){
-              alert(result.data);
-              window.location.replace("profile.html");
+              
+              Swal.fire({
+                title: '抱歉',
+                text: '登入過期，請重新登入後再使用',
+                icon: 'error',
+                confirmButtonColor: '#ff6863',
+              });
+            } else if(result.success){
+              Swal.fire({
+                icon: 'success',
+                title: '祝你一路順風',
+                showConfirmButton: false,
+                timer: 1500
+              })
+              .then(()=>{
+                window.location.replace("profile.html");
+              });
+              
             } else {
-              alert(result.error);
+
+              warningAlert('系統忙碌中，請稍後再試');
+
             }
         })
         .catch(error => {
@@ -448,18 +567,46 @@ async function initMap() {
 
     });
 
+    document.getElementById("recommend-site").addEventListener('click', async(e) => {
+
+      let pin = e.target;
+      selfChosen[pin.parentNode.title] = options[pin.parentNode.title];
+      console.log(pin.parentNode.title);
+
+      if(pin.className == 'abb_plus'){
+
+          addSchedule(document.getElementById('schedule'),pin.parentNode.title);
+          let newMarker = new google.maps.Marker({
+              position: selfChosen[pin.parentNode.title].location,
+              map: map,
+              animation: google.maps.Animation.DROP, // DROP掉下來、BOUNCE一直彈跳
+              draggable: false, // true、false可否拖拉
+              title: pin.parentNode.title,
+          });
+      
+          markers.push(newMarker);
+          showListings(optionMarkers);
+          showListings(markers);
+          console.log(selfChosen);
+          
+      }
+
+
+    });
+
 }
 
 //標點工具
 function showListings(markers) {
-  var bounds = new google.maps.LatLngBounds();
+  // var bounds = new google.maps.LatLngBounds();
   // Extend the boundaries of the map for each marker and display the marker
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
-    bounds.extend(markers[i].position);
+    // bounds.extend(markers[i].position);
     markers[i].setAnimation(null);
   }
-  map.fitBounds(bounds);
+  map.setZoom(13);
+  // map.fitBounds(bounds);
   console.log(markers);
 
 }
@@ -519,65 +666,65 @@ async function calculateAndDisplayRoute(scheduleArrey) {
   plan.totalTime = 0;
   plan.totalDistance = 0;
   routeMarkers = [];
+  console.log(scheduleArrey);
+
+
+  // 繪製路線
+  return new Promise((resolve, reject) => {
+
     let directionsService = new google.maps.DirectionsService();
 
-    // 繪製路線
-    return new Promise((resolve, reject) => {
+    for(let i=0; i<scheduleArrey.length-1; i++){
+      let directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true,
+      });
 
-      for(let i=0; i<scheduleArrey.length-1; i++){
-        let directionsRenderer = new google.maps.DirectionsRenderer({
-          map: map,
-          suppressMarkers: true
-        });
-        routeMarkers.push(directionsRenderer);
-        // let directionsService = new google.maps.DirectionsService();
-        // console.log(scheduleArrey[i].name);
-        var request = {
-            origin: scheduleArrey[i].location,
-            destination: scheduleArrey[i+1].location,
-            travelMode: 'WALKING',
-            transitOptions: {
-                departureTime:new Date('06 Dec 2020 10:00:00'),
-                routingPreference:'FEWER_TRANSFERS'
-            }
-        };
-        directionsService.route(request, function (result, status) {
-          if (status == 'OK') {
+      routeMarkers.push(directionsRenderer);
 
-            console.log(result);
-
-            let legs = result.routes[0].legs[0];
-
-            scheduleArrey[i+1].duraion = legs.duration;
-            scheduleArrey[i+1].distance = legs.distance;
-
-            let steps = result.routes[0].legs[0].steps;
-            let stepContent = "";
-            steps.forEach((e, i) => {
-              stepContent += e.instructions+'<br>';
-            });
-            scheduleArrey[i+1].details = stepContent;
-
-            plan.totalTime += legs.duration.value;
-            plan.totalDistance += legs.distance.value;
-
-            routeMarkers[i].setDirections(result); //這裡要想除掉的方法
-
-          } else {
-            console.log(status);
+      console.log(scheduleArrey[i].name);
+      var request = {
+          origin: scheduleArrey[i].location,
+          destination: scheduleArrey[i+1].location,
+          travelMode: 'TRANSIT',
+          transitOptions: {
+              routingPreference:'FEWER_TRANSFERS'
           }
-        });
-      }
+      };
+      directionsService.route(request, function (result, status) {
+        if (status == 'OK') {
 
-      resolve(scheduleArrey);
+          console.log(result);
 
-    });
+          let legs = result.routes[0].legs[0];
+
+          scheduleArrey[i+1].duration = legs.duration;
+          scheduleArrey[i+1].distance = legs.distance;
+          scheduleArrey[i+1].mode = result.routes[0].fare? "公共運輸" : "步行";
+
+          let steps = result.routes[0].legs[0].steps;
+
+          plan.totalTime += legs.duration.value;
+          plan.totalDistance += legs.distance.value;
+
+          routeMarkers[i].setDirections(result); //這裡對應除掉的動作
+
+        } else {
+          console.log(status);
+        }
+      });
+    }
+    if(scheduleArrey==scheduleArrey){resolve(scheduleArrey);}
+    else{reject(console.log("something wrong whis google api"))};
+    
+
+  });
     
 }
 
-// 搜尋工具
+// 搜尋工具 先不用
 function textSearchPlaces() {
-  if(!plan.startPoint.location){
+  if(!markers[0].position){
     alert('請選旅程起點喔');
   }else if(!document.getElementById('places-self-input').value){
     alert('請輸入搜尋關鍵字');
@@ -589,7 +736,7 @@ function textSearchPlaces() {
     placesService.nearbySearch({
       keyword: document.getElementById('places-self-input').value,
       // bounds: bounds
-      location: plan.startPoint.location,
+      location: markers[markers.length-1].position,
       radius:5000
     }, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -661,14 +808,15 @@ function getPlacesDetails(placeId) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
 
       const value = {
-        id : results.place_id,
+        place_id : results.place_id,
         name : results.name,
         location : results.geometry.location,
         rating : results.rating,
         address : results.formatted_address,
         photo : results.photos[0].getUrl(),
         url : results.url,
-        types : JSON.stringify(results.types)
+        icon: results.icon
+        // types : JSON.stringify(results.types)
       };
       selfChosen[results.name] = value;
 
@@ -691,22 +839,14 @@ function createOptions(array,parentNode,title) {
         inner += `<div class='filterDiv ${options[x].place_key} ' title='${x}'>${x}
         </div>`;
 
-        // inner += `<div class='drag-drop-item list-group-item' title='${x}'>${x.replace('_',' ')}
-        // </div>`;
-
-        // let obj = document.createElement('div');
-        // obj.setAttribute("value",x.site);  // site name
-        // obj.innerText = x.site + x.startTime;
-        // schedule.appendChild(obj);
-
     }
     parentNode.innerHTML = inner;
 
 }
 
-function addSchedule(parentNode,nameObject) {
+function addSchedule(parentNode,title) {
     
-    parentNode.innerHTML += `<div class='drag-drop-item list-group-item' title='${nameObject.name}'>${nameObject.name}
+    parentNode.innerHTML += `<div class='drag-drop-item list-group-item' title='${title}'>${title}
       <img class="minus" src="https://${host}/date-saver/icons/minus.png">
     </div>`;
 
@@ -740,5 +880,106 @@ function createBigCard(pin) {
   <br><a href='${pin.url}' target="_blank" >在 Google 地圖上查看</a>
   <br><img src="https://${host}/date-saver/photos/${pin.photo}">
   </div>`;
+
+}
+
+function getRecommender(placeId){
+  console.log(placeId);
+  let recommendMarker = new google.maps.Marker({
+    map: map,
+    animation: google.maps.Animation.BOUNCE, // DROP掉下來、BOUNCE一直彈跳
+  });
+
+  fetch(`api/1.0/recommendation/${placeId}`, {
+    method: 'GET',
+    headers: new Headers({
+    'Content-Type': 'application/json'
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if(!res.data){
+      console.log(res);
+      document.getElementById("recommend-site").innerHTML = "";
+
+    }else{
+      console.log("recommend site:" +res.data.length);
+
+      let testimonial = [];
+      document.getElementById("recommend-site").innerHTML = "";
+
+      for(let x of res.data){
+    
+        let location = {lat:x.lat,lng:x.lng};
+        options[x.name] = {
+          name: x.name,
+          location: location,
+          place_id: x.place_id,
+          photo: x.photo,
+          url: x.url,
+          place_key: x.place_key,
+          address: x.address
+        };
+        testimonial.push(x.name);
+  
+      }
+
+      for(let x of testimonial){
+
+        document.getElementById("recommend-site").innerHTML += 
+
+        `<div class="about_bottom_item m-top-20">
+            <div class="abb_head">
+                <div class="front abb_head_icon">
+                  <i class="icofont icofont-heart"></i>
+                </div>
+                <div class="back abb_head_icon" title="${options[x].name}">
+                  <img class="abb_plus" src="http://${host}/date-saver/icons/plus.png">
+                </div>
+                <br>
+                <br><strong>${options[x].name}</strong>
+                <br>${options[x].address}
+                <br><a href='${options[x].url}' target="_blank" >在 Google 地圖上查看</a>
+            </div>
+          </div>`;
+        
+      }
+
+    }
+
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+}
+
+//測試生成側邊行程卡
+function sideOptions(sideOptionsArray) {
+
+  document.getElementById('shop').innerHTML = "";
+  document.getElementById('park').innerHTML = "";
+  document.getElementById('fun').innerHTML = "";
+  document.getElementById('art').innerHTML = "";
+  document.getElementById('movie').innerHTML = "";
+    
+  for(let x of sideOptionsArray){
+
+    document.getElementById(`${x.place_key}`).innerHTML += `<a title="${x.name}">${x.name}</a>`;
+
+  }
+
+
+}
+
+// sweet alert
+function warningAlert(warning){
+
+  Swal.fire({
+    title: '哎呀',
+    text: warning,
+    icon: 'warning',
+    confirmButtonColor: '#ff6863',
+  })
 
 }

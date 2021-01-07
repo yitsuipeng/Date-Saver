@@ -5,7 +5,7 @@
         <title>Date Saver</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" href="css/star.png">
+        <link rel="icon" type="image/png" href="css/icons/favourite.png">
 
         <link rel="stylesheet" href="assets/css/slick.css">
         <link rel="stylesheet" href="assets/css/slick-theme.css">
@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="css/filter.css">
 
         <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
         <!--For Plugins external css-->
@@ -79,10 +80,10 @@
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
                             <i class="fa fa-bars"></i>
                         </button>
-                        <a class="navbar-brand" href="#brand">
+                        <a class="navbar-brand" href="index.html">
 
-                            <img src="assets/images/logo.png" class="logo logo-display m-top-10" alt="">
-                            <img src="assets/images/logo.jpg" class="logo logo-scrolled" alt="">
+                            <img src="assets/images/logo-trans.png" class="logo logo-display" alt="">
+                            <img src="assets/images/logo-trans.png" class="logo logo-scrolled" alt="">
                         </a>
                     </div>
                     <!-- End Header Navigation -->
@@ -91,40 +92,41 @@
                     <div class="collapse navbar-collapse" id="navbar-menu">
                         <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
                             <li><a href="planning.html">開始旅程</a></li>                    
-                            <li><a href="#about">熱門旅程</a></li>                    
-                            <li><a href="progile.html">我的約會</a></li>                    
-                            <li><a href="sign.html">登入</a></li>                    
+                            <li><a href="hot.html">熱門旅程</a></li>                    
+                            <li><a href="profile.html">我的約會</a></li>                 
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </div>  
             </nav>
 
             <!--Subscribe section 選項攔-->
-            <section id="subscribe" class="subscribe roomy-40 fix">
+            <section id="subscribe" class="subscribe roomy-30 fix p-top-60">
                 <div class="overlay"></div>
                 <div class="container">
                     <div class="row">
-                        <div class="main_subscribe text-center">
-                            <div class="col-sm-3">
-                                <div class="subscribe_btns m-top-20">
-                                    <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
+                        <div class="main_subscribe">
+                            <div class="col-md-4">
+                                <div class="subscribe_btns">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="places-input" placeholder="輸入地點">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-3 ">
+                            <!-- <div class="col-sm-4">
                                 <div class="subscribe_btns m-top-20">
-
-                                    <input type="date" class="form-control date" id="date" placeholder="約會日期">
-
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-6 ">
-                                <div class="subscribe_btns m-top-20">
-                                    <form class="form-inline">
-
-                                            <input type="text" class="form-control" id="places-input" placeholder="選一個旅程的起點">
-                                            <div id="start" type="submit" class="btn btn-primary">開始旅程</div>
-
-                                    </form>
+                            </div> -->
+                            <div class="col-md-8">
+                                <div class="subscribe_btns">
+                                    <div class="form-group" style="display: flex; justify-content: space-between;">
+                                        <!-- <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字">
+                                        <input type="date" class="form-control date" id="date" placeholder="約會日期"> -->
+                                        <button id="start" type="submit" class="btn btn-primary">搜尋</button>
+                                        <button id="save-schedule" type="submit" class="btn btn-primary">儲存</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +138,42 @@
 
             <div class="container">
                 <div class="row">
-                    <div id="map" style="height:250px"></div>
+                    <div class="col-md-4">
+                        <div id="sidebar" class="sidenav">
+                            <button class="dropdown-btn">來點逛街
+                                <i class="fa fa-caret-down"></i>
+                              </button>
+                              <div class="dropdown-container" id="shop">
+                              </div>
+
+                            <button class="dropdown-btn">來點散步
+                            <i class="fa fa-caret-down"></i>
+                            </button>
+                            <div class="dropdown-container" id="park">
+                            </div>
+
+                            <button class="dropdown-btn">來點文藝
+                                <i class="fa fa-caret-down"></i>
+                              </button>
+                              <div class="dropdown-container" id="art">
+                              </div>
+
+                            <button class="dropdown-btn">來點有趣
+                              <i class="fa fa-caret-down"></i>
+                            </button>
+                            <div class="dropdown-container" id="fun">
+                            </div>
+
+                            <button class="dropdown-btn">來點電影
+                                <i class="fa fa-caret-down"></i>
+                              </button>
+                              <div class="dropdown-container" id="movie">
+                              </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 p-top-20">
+                        <div id="map" style="height:300px;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -146,16 +183,15 @@
                 <div class="container">
                     <hr>
                     <div id="myBtnContainer">
-                        <button class="btn active" onclick="filterSelection('all')">給我全部</button>
+                        <!-- <button class="btn active" onclick="filterSelection('all')">給我全部</button> -->
+                        <!-- <button class="btn active" onclick="filterSelection('shop')">來點逛街</button>
+                        <button class="btn" onclick="filterSelection('park')">來點散步 </button>
                         <button class="btn" onclick="filterSelection('art')">來點文藝</button>
                         <button class="btn" onclick="filterSelection('fun')">來點有趣</button>
-                        <button class="btn" onclick="filterSelection('park')">來點散步 </button>
-                        <button class="btn" onclick="filterSelection('history')">來點復古</button>
-                        <button class="btn" onclick="filterSelection('hike')">來點踏青</button>
-                        <button class="btn" onclick="filterSelection('shop')">來點逛街</button>
-                        <button class="btn" onclick="filterSelection('night')">來點夜生活</button>
-                        <input id="places-self-input" type="text" placeholder="EX. 電影">
-                        <button id="search-places" class="btn" onclick="filterSelection('choice')">搜尋</button>
+                        <button class="btn" onclick="filterSelection('movie')">來點電影</button> -->
+                        <!-- <button class="btn" onclick="filterSelection('movie')">來點逛街</button> -->
+                        <!-- <input id="places-self-input" type="text" placeholder="EX. 電影">
+                        <button id="search-places" class="btn" onclick="filterSelection('choice')">關鍵字搜尋</button> -->
                     </div>
                     <div id="near-option">
                         <!-- <div class="filterDiv cars">BMW</div>
@@ -165,171 +201,72 @@
                 </div>
             </section>
             <!--About Sections-->
-            <section id="about" class="about roomy-50">
+            <section id="about" class="about p-bottom-30" style="min-height:500px">
                 <div class="container">
                     <div class="row">
                         <div class="main_about">
-                            <div class="col-md-6">
+
+                            <div class="col-md-4">                              
+                                <div class="about_accordion wow fadeIn">
+                                    <button id="optimize-schedule" type="submit" class="btn btn-primary">依最短距離排序</button>
+                                    <button id="make-schedule" type="submit" class="btn btn-primary">匯出路徑</button>
+                                    
+                                    <!--這裡要放東西-->
+                                </div>
+                                <br>
+                                <div id="schedule"></div>
+                            </div>
+                            <div class="col-md-5">
                                 <div class="about_content">
-                                    <h3 id="interesting-distance">今天要約會</h3>
-                                    <h3 id="interesting-time"></h3>
+                                    <p>點選景點加入選單，拖曳可調整景點順序喔</p>
                                     <div class="separator_left"></div>
+                                    <h5 id="interesting-distance"></h5>
+                                    <h5 id="interesting-time"></h5>
                                     <!--這裡要放東西-->
                                     <div id="self-chosen-site"></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <button id="optimize-schedule" type="submit" class="btn btn-primary">神啊給我最短路線</button>
-                                <button id="make-schedule" type="submit" class="btn btn-primary">匯出路徑</button>
-                                <button id="save-schedule" type="submit" class="btn btn-primary">儲存旅程</button>
-                                <hr>
-                                <div class="about_accordion wow fadeIn">
-                                    <div id="schedule">點選景點加入選單，拖曳可調整景點順序喔</div>
-                                    <!--這裡要放東西-->
+                            <div class="col-md-3">
+                                <div class="about_content" style="text-align: center;">
+                                    <p>在這裡約會的人會順路去...</p>
+                                    <div class="separator_auto"></div>
+                                    <div id="recommend-site" class="about_bottom_content set_center">
                                     </div>
+
                                 </div>
                             </div>
+
                         </div>
                     </div><!--End off row-->
                 </div><!--End off container -->
-                 <hr />
-                <br />
-                <br />
-                <div class="container">
+                <!-- <div class="container">
                     <div class="row">
-                        <div class="about_bottom_content">
-                            <div class="col-md-4">
-                                <div class="about_bottom_item m-top-20">
-                                    <div class="ab_head">
-                                        <div class="ab_head_icon">
-                                            <i class="icofont icofont-fire-burn"></i>
-                                        </div>
-                                        <h6 class="m-top-20"> WE’RE CREATIVE</h6>
-                                    </div>
-                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
-                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
-                                        magna diam aliquafm erat voluitpati. </p>
+                        <div class="main_service roomy-50">
+                            <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                                <div class="text-center">
+                                    <h6>在這裡約會的人...</h6>
+                                    <div class="separator_auto"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="about_bottom_item m-top-20">
-                                    <div class="ab_head">
-                                        <div class="ab_head_icon">
-                                            <i class="icofont icofont-speech-comments"></i>
+                            <div id="recommend-site" class="about_bottom_content set_center" style="text-align: center;">
+                                <div class="col-md-4">
+                                    <div class="about_bottom_item m-top-20">
+                                        <div class="ab_head">
+                                            <div class="ab_head_icon">
+                                                <i class="icofont icofont-heart"></i>
+                                            </div>
+                                            <h6 class="m-top-20">WE LOVE MINIMALISM</h6>
                                         </div>
-                                        <h6 class="m-top-20">WE'RE FRIENDLY</h6>
+                                        <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
+                                            sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
+                                            magna diam aliquafm erat voluitpati. </p>
                                     </div>
-                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
-                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
-                                        magna diam aliquafm erat voluitpati. </p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="about_bottom_item m-top-20">
-                                    <div class="ab_head">
-                                        <div class="ab_head_icon">
-                                            <i class="icofont icofont-heart"></i>
-                                        </div>
-                                        <h6 class="m-top-20">WE LOVE MINIMALISM</h6>
-                                    </div>
-                                    <p class="m-top-20">Lorem ipsum dolor sit amet, consectetuer adipiscing ealit, 
-                                        sed diaim nonummy nibsih euismod tincidiunt laorieet doloire
-                                        magna diam aliquafm erat voluitpati. </p>
                                 </div>
                             </div>
                         </div>
-                    </div><!--End off row-->
-                </div><!--End off container -->
+                    </div>
+                </div> -->
             </section> <!--End off About section -->
-
-
-            <br>
-            <br>
-
-            <!--Testimonial Section-->
-            <section id="testimonial" class="testimonial fix">
-                <div class="overlay"></div>
-                <div class="container">
-                    <div class="row">
-                        <div class="main_testimonial roomy-100">
-                            <div class="head_title text-center">
-                                <h2 class="text-white">OUR TESTIMONIALS</h2>
-                            </div>
-                            <div class="testimonial_slid text-center">
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="testimonial_item">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <p class="text-white">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy 
-                                            nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-                                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
-                                            suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-
-                                        <div class="test_authour m-top-30">
-                                            <h6 class="text-white m-bottom-20">JOHN DOE - THEMEFOREST USER</h6>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!--End off row-->
-                </div><!--End off container -->
-            </section> <!--End off Testimonial section -->
-
 
             <!-- The Modal -->
             <div id="myModal" class="modal col-md-4 text-center">
@@ -341,24 +278,20 @@
                     <!-- <div class="col-md-4 col-sm-12"> -->
                         <div class="pricing_item sm-m-top-30">
                             <div class="pricing_top_border"></div>
-                            <div class="pricing_head p-top-30 p-bottom-100 text-center">
-                                <h4 id="plan-name" class="text-uppercase">PREMIUM</h4>
-                                <p id="plan-date" class="text-black">per month</p>
+                            <div class="pricing_head p-top-30 p-bottom-30 text-center" style="text-align: center;">
+                                <!-- <h4 id="plan-name" class="text-uppercase">PREMIUM</h4>
+                                <p id="plan-date" class="text-black">per month</p> -->
+                                <input type="text" class="form-control" id="name" placeholder="為你的約會取一個閃亮亮的名字" style="width: 80%; margin: auto;">
+                                <br>
+                                <input type="date" class="form-control" id="date" placeholder="約會日期" style="width: 80%; margin: auto;">
                             </div>
-                            <div class="pricing_price_border text-center">
-                                <div class="pricing_price">
-                                    <h3 id="plan-distance" class="text-white">$39</h3>
-                                    <p id="plan-time" class="text-white">per month</p>
-                                </div>
-                            </div>
-
-                            <div id="plan-details" class="pricing_body bg-white p-top-110 p-bottom-60">
-                                <!-- <ul>
+                            <!-- <div id="plan-details" class="pricing_body bg-white p-top-110 p-bottom-60">
+                                <ul>
                                     <li><i class="fa fa-check-circle text-primary"></i> <span>50</span> user</li>
                                     <li><i class="fa fa-check-circle text-primary"></i> Unlimited Bandwidth</li>
-                                </ul> -->
-                            </div>
-                            <div class="btn btn-primary text-center m-top-40" id="done">儲存行程
+                                </ul>
+                            </div> -->
+                            <div class="btn btn-primary text-center m-top-20 m-bottom-20" id="done">儲存行程
                             </div>
                         </div>
                     <!-- </div>End off col-md-4 -->
@@ -381,7 +314,7 @@
                                 Made with 
                                 <i class="fa fa-heart"></i>
                                 by 
-                                <a target="_blank" href="http://bootstrapthemes.co">Erin Peng</a> 
+                                <a target="_blank" href="https://www.linkedin.com/in/yitsuipeng/">Erin Peng</a> 
                                 2020. All Rights Reserved
                             </p>
                         </div>

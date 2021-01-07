@@ -2,26 +2,25 @@
 const host = 'd2cw5pt7i47jz6.cloudfront.net';
 const token = window.localStorage.getItem('Authorization');
 
-fetch(`user/verifyUser`, {
-    method: 'GET',
-    headers: new Headers({
-        'Authorization': token
+if(token){
+    fetch(`api/1.0/verifyUser`, {
+        method: 'GET',
+        headers: new Headers({
+            'Authorization': token
+        })
     })
-  })
-  .then(res => res.json())
-  .then(res => {
-    if(res.data){
+    .then(res => res.json())
+    .then(res => {
+    if(res.data.access_token){
+        successAlert(res.data.username);
         window.location.replace("profile.html");
-    }
-    else{
-      console.log(res)
-    }
-  })
-  .catch(error => {
-      console.error('Error:', error);
-      alert('系統錯誤,請稍後再試');
-      return error;
-  });
+    }})
+    .catch(error => {
+        console.error('Error:', error);
+        alert('系統錯誤,請稍後再試');
+        return error;
+    });
+}
 
 
 let upButton = document.querySelector('#upButton');
@@ -34,111 +33,43 @@ let inInputEmail = document.querySelector('#inInputEmail');
 let inInputPassword = document.querySelector('#inInputPassword');
 
 upButton.addEventListener('click',function(){ //新增項目
-    if(!upInputName.value||!upInputPassword.value||!upInputEmail.value){
-        alert('請完成全部欄位');
-    }else{
-        console.log('signup info complete');
 
-        fetch('user/signup', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-                }),
-            body:JSON.stringify({'name':upInputName.value,
-            'email':upInputEmail.value,
-            'password':upInputPassword.value
-        })})
-        // .then(res => res.json())
-        .then(res => res.json())
-        .then(result => {
-            console.log(result);
-            if(result.data.access_token){
-                alert('註冊成功!');
-                window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                window.location.replace("profile.html");
-            }else{
-                alert(result.data);
-            }
-            console.log('Success:', result);
-            return result;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            return error;
-        })
-    }   
+    fetchAPI('signup', {
+        'name':upInputName.value,
+        'email':upInputEmail.value,
+        'password':upInputPassword.value
+    });
+  
 });
 
 inButton.addEventListener('click',function(){ //新增項目
-    if(!inInputPassword.value||!inInputEmail.value){
-        alert('請完成全部欄位');
-    }else{
-        console.log('signin info complete');
 
-        fetch('user/signin', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-                }),
-            body:JSON.stringify({'provider':'native',
-            'email':inInputEmail.value,
-            'password':inInputPassword.value
-        })})
-        .then(res => res.json())
-        .then(result => {
-            if(result.data.access_token){
-                alert(`Hi ${result.data.username} , 歡迎回來!`);
-                window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                window.location.replace("profile.html");
-            }else{
-                alert(result.data);
-            }
-            console.log('Success:', result);
-            return result;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            return error;
-        })
-    }   
+    fetchAPI('signin', {
+        'provider':'native',
+        'email':inInputEmail.value,
+        'password':inInputPassword.value
+    });
+
 });
 
 
 // facebook
 function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
 
-    console.log(response.status);                   // The current login status of the person.
     if (response.status === 'connected') {   // Logged into your webpage and Facebook.
         console.log(response.authResponse.accessToken);
 
-        fetch('user/signin', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json'
-                }),
-            body:JSON.stringify({'provider':'facebook',
-            'access_token':response.authResponse.accessToken
-        })})
-        .then(res => res.json())
-        .then(result => {
-            if(result.data.access_token){
-                alert(`Hi ${result.data.username} , 歡迎回來!`);
-                window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
-                window.location.replace("profile.html");
-            }else{
-                alert(result.data);
-            }
-            console.log('Success:', result);
-            return result;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            return error;
-        })
-
+        fetchAPI('signin',{'provider':'facebook',
+        'access_token':response.authResponse.accessToken
+        });
 
     } else {                                 // Not logged into your webpage or we are unable to tell.
-        console.log('need to login');
+        Swal.fire({
+            icon: 'error',
+            title: '哎呀',
+            text: 'Facebook登入錯誤',
+            confirmButtonColor: '#ff6863'
+        });
     }
 }
 
@@ -157,4 +88,84 @@ window.fbAsyncInit = function() {
     });
 
 };
- 
+
+function successAlert(name){
+
+    Swal.fire({
+        icon: 'success',
+        title: `Hi ${name}, 歡迎`,
+        showConfirmButton: false,
+        timer: 1500
+    }).then(()=>{
+            
+        window.location.replace("planning.html");
+
+    });
+
+}
+
+function fetchAPI(api,body){
+
+    fetch('api/1.0/'+api, {
+        method: 'POST',
+        headers: new Headers({
+            'Content-Type': 'application/json'
+            }),
+        body:JSON.stringify(body)})
+    .then(res => res.json())
+    .then(result => {
+
+        if(result.data){
+
+            window.localStorage.setItem('Authorization', 'Bearer '+result.data.access_token);
+            successAlert(result.data.username);
+            
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: '哎呀',
+                text: result.error,
+                confirmButtonColor: '#ff6863'
+            });
+        }
+        return result;
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: '哎呀',
+            text: error,
+            confirmButtonColor: '#ff6863'
+        });
+        return error;
+    })
+
+}
+
+
+$(document).ready(function(){
+    $('.login-info-box').fadeOut();
+    $('.login-show').addClass('show-log-panel');
+});
+
+
+$('.login-reg-panel input[type="radio"]').on('change', function() {
+    if($('#log-login-show').is(':checked')) {
+        $('.register-info-box').fadeOut(); 
+        $('.login-info-box').fadeIn();
+        
+        $('.white-panel').addClass('right-log');
+        $('.register-show').addClass('show-log-panel');
+        $('.login-show').removeClass('show-log-panel');
+        
+    }
+    else if($('#log-reg-show').is(':checked')) {
+        $('.register-info-box').fadeIn();
+        $('.login-info-box').fadeOut();
+        
+        $('.white-panel').removeClass('right-log');
+        
+        $('.login-show').addClass('show-log-panel');
+        $('.register-show').removeClass('show-log-panel');
+    }
+});

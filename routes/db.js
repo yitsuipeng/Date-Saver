@@ -4,7 +4,7 @@ if (result.error) {
 }
 const mysql = require('mysql');
 
-// traditional db
+// original db
 const db =
     {
         host: result.parsed.DB_HOST,
@@ -13,37 +13,28 @@ const db =
         database: 'project'
     };
 
-const traditional = mysql.createConnection(db);
-traditional.connect((err) => {
+const original = mysql.createConnection(db);
+original.connect((err) => {
     if (err) {
         throw err;
     }
     console.log('intoSql connected');
 });
 
+// control develop / test
+const dbStatus = 'project';
 
-// pool
 const pool  = mysql.createPool({
     connectionLimit : 10,
     host            : result.parsed.DB_HOST,
     user            : result.parsed.DB_USER,
     password        : result.parsed.DB_PASS,
-    database        : 'project'
+    database        : dbStatus
 });
-
-// lack of release of the connections
-// pool.getConnection((err) => {
-
-//     if (err) {
-//         throw err;
-//     }
-//     console.log('queryPool connected');
-// });
-
 
 function intoSql (queryType, condition) {
     return new Promise((resolve, reject) => {
-        traditional.query(queryType, condition, (err, result) => {
+        original.query(queryType, condition, (err, result) => {
             if (err) reject(err);
             resolve(result);
         });
@@ -52,6 +43,7 @@ function intoSql (queryType, condition) {
 
 const queryPool = function (queryType, condition) {
     return new Promise((resolve, reject) => {
+        
         pool.query(queryType, condition, (err, result, fields) => {
             if (err) reject(err);
             resolve(result);
@@ -59,14 +51,4 @@ const queryPool = function (queryType, condition) {
     });
 };
 
-module.exports = {db,queryPool,intoSql,pool};
-
-// const mysql = require('mysql');
-// const connectConfig = require('./db');
-// const db = mysql.createConnection(connectConfig);
-// db.connect((err) => {
-//     if (err) {
-//         throw err;
-//     }
-//     console.log('mysql-product_list connected');
-// });
+module.exports = {queryPool,intoSql,dbStatus};

@@ -16,11 +16,10 @@
         <link rel="stylesheet" href="assets/css/magnific-popup.css">
         <link rel="stylesheet" href="assets/css/bootsnav.css">
 
-        <link rel="stylesheet" href="css/filter.css">
+        <link rel="stylesheet" href="css/profile.css">
         <link rel="stylesheet" href="css/background.css">
 
         <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
         <!--For Plugins external css-->
@@ -32,6 +31,9 @@
 
         <!--Theme Responsive css-->
         <link rel="stylesheet" href="assets/css/responsive.css" />
+
+        <!--我要來試calendar-->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.4.0/main.css">
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
     </head>
@@ -94,124 +96,76 @@
                         <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
                             <li><a href="planning.html">開始旅程</a></li>                    
                             <li><a href="hot.html">熱門旅程</a></li>                    
-                            <li><a href="profile.html">我的約會</a></li>                    
+                            <li><a href="profile.html">我的約會</a></li>                 
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </div>  
             </nav>
             
             <!--Impress section-->
-            <section id="impress" class="sign-back">
+            <section id="impress" class="hotblog roomy-100">
                 <div class="overlay"></div>
                 <div class="container">
                     <div class="row">
                         <div class="main_impress text-center">
                             <div class="col-sm-8 col-sm-offset-2">
-                                <h2 class="text-white text-uppercase"></h2>
-                                    
+                                <h2 class="text-white text-uppercase">HOT DATES</h2>
+                                <p class="m-top-40 text-white">來看看大家都去哪裡約會！</p>
                             </div>
                         </div>
-                        <!-- 嘗試LOGIN模板 -->
-
-                        <div class="login-reg-panel" style="margin-top: 200px;">
-                            <div class="login-info-box">
-                                <h3>約會老手?</h3>
-                                <p>歡迎回來</p>
-                                <label id="label-register" for="log-reg-show">登入</label>
-                                <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
-                            </div>
-                                                
-                            <div class="register-info-box">
-                                <h3>約會新手?</h3>
-                                <p>快來加入我們吧</p>
-                                <label id="label-login" for="log-login-show">註冊</label>
-                                <input type="radio" name="active-log-panel" id="log-login-show">
-                            </div>
-                                                
-                            <div class="white-panel">
-                                <div class="login-show">
-                                    <h3>登入</h3>
-                                    <input id="inInputEmail" name="email" type="text" placeholder="Email" required="">
-                                    <input id="inInputPassword" name="password" type="password" placeholder="Password" required="">
-                                    <input id="inButton" type="button" value="Login">
-                                    
-                                    <div class="fb-login-button" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true" data-width="100%" scope="public_profile,email" onlogin="checkLoginState();"></div>
-                                </div>
-                                <div class="register-show">
-                                    <h3>註冊</h3>
-                                    <input id="upInputName" name="first_name" type="text" placeholder="Name">
-                                    <input id="upInputEmail" name="email" type="text" placeholder="Email">
-                                    <input id="upInputPassword" name="password" type="password" placeholder="Password">
-                                    <input id="upButton" type="button" value="Register">
-                                </div>
-                            </div>
-                        </div>
-
                     </div><!--End off row -->
                 </div><!--End off container -->
             </section><!-- End off Impress section-->
 
-<!--Contact Us Section-->
-<!-- <section id="contact" class="contact bg-mega fix">
-    <div class="container">
-        <div class="row">
-            <div class="main_contact roomy-50 text-white">
-                <div class="col-md-4">
-                    <div class="rage_widget">
-                        <div class="widget_head">
-                            <h3 class="text-white">登入 | 註冊</h3>
-                            <div class="separator_left"></div>
-                        </div>
-                        <div class="widget_socail m-top-30">
-                            <ul class="list-inline">
-                                <div class="fb-login-button" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true" data-width="100px" scope="public_profile,email" onlogin="checkLoginState();"></div>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 sm-m-top-30">
-        
-                    <div class="row">
-                        <div class="col-sm-12">
-                                <input id="inInputEmail" name="email" type="text" placeholder="EMAIL" class="form-control" required="">
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">  
-                                <input id="inInputPassword" name="password" type="text" placeholder="密碼" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group text-center btn-primary" id="inButton">登入
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 sm-m-top-30">
-                    
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <input id="upInputName" name="first_name" type="text" placeholder="名稱" class="form-control" required="">
-                        </div>
-                        <div class="col-sm-12">
-                            <input id="upInputEmail" name="email" type="text" placeholder="EMAIL" class="form-control" required="">
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">  
-                                <input id="upInputPassword" name="password" type="text" placeholder="密碼" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group text-center btn-primary" id="upButton">註冊
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            </div>
-        </div>
-    </div>
-</section> -->
 
+            <!--Blog Section-->
+            <section id="blog" class="blog">
+                <div class="container">
+                    <div class="row">
+                        <div id='canvas' class="main_blog text-center roomy-50">
+                            <!-- <div class="col-md-4">
+                                <div class="blog_item m-top-20">
+                                    <div class="blog_item_img">
+                                        <img src="assets/images/Blog/1.jpg" alt="" />
+                                    </div>
+                                    <div class="blog_text roomy-40">
+                                        <h6>PLEASUARE WITHOUT CONSCIENCE</h6>
+                                        <p><em><a href="">May 15, 2016</a> /<a href="">admin</a>/<a href=""> Co-working</a></em></p>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div><!--End off row -->
+                </div><!--End off container -->
+            </section><!-- End off Blog section-->
 
+            <!-- The Modal -->
+            <div id="myModal" class="modal col-md-4 text-center">
+
+                <!-- Modal content -->
+                <div class="modal-content" style="width:50%">
+                    <span class="close">&times;</span>
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1 col-sm-12 col-sm-offset-1">
+                            <div class="text-center">
+                                <h3 id="plan-name">OUR SERVICES</h3>
+                                <div class="separator_auto"></div>
+                                <p id="plan-comment">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
+                                    sed diam nonummy nibh euismod nostrud exerci tation ullamcorper 
+                                    suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
+                            </div>
+                            <div id="plan-details" class="p-top-30 p-bottom-30 text-left">
+                                <!-- <ul>
+                                    <li><i class="fa fa-check-circle text-primary"></i> <span>50</span> user</li>
+                                    <li><i class="fa fa-check-circle text-primary"></i> Unlimited Bandwidth</li>
+                                </ul> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="map" style="height:250px"></div>
+                </div>
+    
+            </div>           
 
 
             <!-- scroll up--   以下都要黏>
@@ -237,9 +191,8 @@
             </footer>
 
         </div>
-
-            <div id="fb-root"></div>
-            <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v9.0&appId=1192657334449088&autoLogAppEvents=1" nonce="ZSqD5D5u"></script>
+            <script src="socket.io/socket.io.js"></script>
+            <script src="js/hot.js"></script>
 
             <!-- JS includes -->
 
@@ -252,17 +205,17 @@
             <script src="assets/js/jquery.collapse.js"></script>
             <script src="assets/js/bootsnav.js"></script>
 
+            <!--calendar的plugin-->
+            <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.4.0/main.min.js"></script>
 
             <!-- paradise slider js -->
 
-
-            <!-- <script src="http://maps.google.com/maps/api/js?key=AIzaSyD_tAQD36pKp9v4at5AnpGbvBUsLCOSJx8"></script> -->
-            <!-- <script src="assets/js/gmaps.min.js"></script> -->
-
             <script src="assets/js/plugins.js"></script>
             <script src="assets/js/main.js"></script>
-            <script src="js/sign.js"></script>
+            <script async defer src=
+                "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyBnr8RhoIjlRKQ7iTT8yM7IfQJpv64znyg&v=3&callback=initMap">
+            </script>
 
-
+            
     </body>
 </html>
