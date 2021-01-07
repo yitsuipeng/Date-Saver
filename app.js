@@ -3,9 +3,8 @@ const bodyParser = require('body-parser');
 const {socketView} = require('./routes/planning_model');
 const app = express();
 
-
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 io.on('connection', socketView);
 
@@ -19,8 +18,6 @@ app.set('json spaces', 2);
 
 //connect to other js files
 app.use('/api/1.0', require('./routes/routers'));
-// app.use('/user', require('./routes/user_controller'));
-
 
 // Page not found
 app.use(function (req, res, next) {

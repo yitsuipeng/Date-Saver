@@ -21,9 +21,9 @@ original.connect((err) => {
     console.log('intoSql connected');
 });
 
+// control develop / test
 const dbStatus = 'project';
 
-// pool & test
 const pool  = mysql.createPool({
     connectionLimit : 10,
     host            : result.parsed.DB_HOST,

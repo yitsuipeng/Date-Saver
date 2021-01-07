@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const { queryPool } = require('./db');
 const validator = require('validator');
 const User = require('./user_model');
 

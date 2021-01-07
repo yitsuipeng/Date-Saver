@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const { upload,verifyToken,wrapAsync } = require('./util');
 
-
-
 const {
     getIndexOption,
     getNearOption,
@@ -30,8 +28,6 @@ router.route('/recommendation/:id')
 
 router.route('/savePlanning')
     .post(verifyToken, wrapAsync(savePlanning));
-
-
     
 const {
     signUp,
@@ -56,7 +52,5 @@ router.route('/uploadShares')
 
 router.route('/getHotOrders')
     .get(wrapAsync(getHotOrders));
-
-
 
 module.exports = router;

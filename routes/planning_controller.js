@@ -1,7 +1,6 @@
 const { queryPool } = require('./db');
 const Main = require('./planning_model');
 
-
 // index (not used then)
 const getIndexOption = async (req, res) => {
 
@@ -225,7 +224,6 @@ const verifyUser = async (req, res) => {
     res.status(200).send({ data: {access_token:req.token}});
 };
 
-// module.exports = router;
 module.exports = {
     getIndexOption,
     getNearOption,
