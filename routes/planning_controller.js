@@ -152,8 +152,8 @@ const savePlanning = async (req, res) => {
     
         await Main.saveOrder(orderInfo);
         const places = await Main.checkNewPlace();
+
         let newSiteArray = [];
-    
         for(let x of planDetails.schedule){
             let same = 0;
             for(let y of places){
@@ -167,8 +167,10 @@ const savePlanning = async (req, res) => {
     
             }
         }
+        if(newSiteArray.length > 0){
+            await Main.createNewPlace(newSiteArray);
+        }
 
-        await Main.createNewPlace(newSiteArray);
         await Main.collaborativeFiltering();
         console.log('succeed');
 

@@ -44,7 +44,7 @@ const createNewPlace = async (newSiteArray) => {
 
 const checkMatrix = async (name) => {
     console.log('checkMatrix');
-    return await await queryPool(`SELECT * FROM cf_index INNER JOIN places ON cf_index.second = places.place_id where first = '${name}' AND sim != 0 ;`, null);
+    return await queryPool(`SELECT * FROM cf_index INNER JOIN places ON cf_index.second = places.place_id where first = '${name}' AND sim != 0 ;`, null);
 };
 
 const collaborativeFiltering = async() => {
