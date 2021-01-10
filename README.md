@@ -20,6 +20,12 @@ Website Link: https://date-saver.online/
   <li>
     <a href="#Features">Features</a>
   </li>
+  <li>
+    <a href="#Demo Account">Demo Account</a>
+  </li>
+  <li>
+    <a href="#Contact">Contact</a>
+  </li>
 </ul>
 
 ## Technologies
@@ -80,3 +86,9 @@ Website Link: https://date-saver.online/
 - personal profile
 ![image](https://s3-ap-northeast-1.amazonaws.com/stylisherin.site/date-saver/readme/profile.PNG)
 
+## Demo Account
+- Email: demo@demo.com
+- Password: demo
+
+## Contact
+email: yitsuipeng@gmail.com
