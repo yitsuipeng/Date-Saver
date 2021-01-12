@@ -74,7 +74,7 @@ Website Link: https://date-saver.online/
 3. Save the plan
 - after naming this date and selecting the time, the plan will be shown on the personal calendar
 
-![image](https://github.com/yitsuipeng/resume/blob/master/v2.3.gif)
+![image](https://github.com/yitsuipeng/Date-Saver/blob/master/v2.5.gif)
 
 #### 熱門旅程
 - tap each photo to see the indivisual comment and travel itinerary
