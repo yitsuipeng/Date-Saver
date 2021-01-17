@@ -146,7 +146,16 @@ async function initMap() {
   
     })
     .catch(error => {
-        console.error('Error:', error);
+      Swal.fire({
+        title: '哎呀',
+        text: '請先登入喔',
+        icon: 'warning',
+        showConfirmButton: false,
+        timer: 1500
+      }).then(()=>{
+        window.localStorage.removeItem('Authorization');   
+        window.location.replace("sign.html");
+      });
         return error;
     });
 
@@ -158,8 +167,8 @@ async function initMap() {
       showConfirmButton: false,
       timer: 1500
     }).then(()=>{
-           
-            window.location.replace("sign.html");
+      window.localStorage.removeItem('Authorization');   
+      window.location.replace("sign.html");
     });
 
   }
@@ -219,7 +228,7 @@ async function initMap() {
 
         selfChosen[plan.startPoint.name] = plan.startPoint;  //到列印再存
 
-        await fetch(`api/1.0/getNearOption/${JSON.stringify(plan.startPoint.location)}`, {
+        await fetch(`api/1.0/option/${JSON.stringify(plan.startPoint.location)}`, {
           method: 'GET',
           headers: new Headers({
           'Content-Type': 'application/json'

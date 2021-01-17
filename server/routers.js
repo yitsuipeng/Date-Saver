@@ -9,7 +9,7 @@ const {
     savePlanning,
     verifyUser
     
-} = require('./planning_controller');
+} = require('./controllers/planning_controller');
 
 router.route('/verifyUser')
     .get(verifyToken, wrapAsync(verifyUser));
@@ -17,7 +17,7 @@ router.route('/verifyUser')
 router.route('/getIndexOption')
     .get(wrapAsync(getIndexOption));
 
-router.route('/getNearOption/:location')
+router.route('/option/:location')
     .get(wrapAsync(getNearOption));
 
 router.route('/optimization')
@@ -36,7 +36,7 @@ const {
     uploadShares,
     getHotOrders,
     
-} = require('./user_controller');
+} = require('./controllers/user_controller');
 
 router.route('/signUp')
     .post(wrapAsync(signUp));
@@ -44,13 +44,13 @@ router.route('/signUp')
 router.route('/signIn')
     .post(wrapAsync(signIn));
 
-router.route('/getProfile')
+router.route('/profile')
     .get(verifyToken, wrapAsync(getProfile));
 
-router.route('/uploadShares')
+router.route('/sharing')
     .post(upload.single('main_image'), wrapAsync(uploadShares));
 
-router.route('/getHotOrders')
+router.route('/hot')
     .get(wrapAsync(getHotOrders));
 
 module.exports = router;

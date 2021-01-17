@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const axios = require('axios');
-const { queryPool } = require('./db');
+const { queryPool } = require('../db');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 

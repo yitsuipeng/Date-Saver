@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const validator = require('validator');
-const User = require('./user_model');
+const User = require('../models/user_model');
 
 const signUp = async (req, res) => {
     let {name} = req.body;

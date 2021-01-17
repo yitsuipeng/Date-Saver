@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { queryPool } = require('./db');
+const { queryPool } = require('../db');
 
 const socketView = (socket) => {
 

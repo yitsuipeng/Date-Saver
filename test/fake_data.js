@@ -1,4 +1,4 @@
-const { queryPool } = require('../routes/db');
+const { queryPool } = require('../server/db');
 const crypto = require('crypto');
 
 const users = [

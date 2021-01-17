@@ -5,13 +5,13 @@ let orders={};
 
 if(token){
 
-    fetch('api/1.0/getProfile', {
+    fetch('api/1.0/profile', {
         method: 'GET',
         headers: new Headers({
         'Authorization': token
         })
     })
-    .then(res => res.json()) //這裡要改成噴不同訊息要跳轉畫面  跟拿到payload要印在版面上
+    .then(res => res.json()) 
     .then(result => {
         if(result.data.user){
             console.log(result.data);
@@ -37,16 +37,10 @@ if(token){
     
             showCalendar(data.order);
     
-            // let picture = document.createElement('img');
-            // picture.setAttribute('src',data.data.user.picture);
-            // document.getElementById('user-picture').appendChild(picture);
-
         }else{
 
             warningAlert(result);
-            // alert(result.data);
-            // window.localStorage.removeItem('Authorization');
-            // window.location.replace("sign.html");
+
         }
 
     })

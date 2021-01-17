@@ -1,5 +1,5 @@
-const { queryPool } = require('./db');
-const Main = require('./planning_model');
+const { queryPool } = require('../db');
+const Main = require('../models/planning_model');
 
 // index (not used then)
 const getIndexOption = async (req, res) => {
@@ -114,7 +114,6 @@ const optimization = async (req, res) => {
 const recommendation = async (req, res) => {
 
     const name = req.params.id;
-    console.log(name);
 
     let simQuery = await Main.checkMatrix(name);
 
@@ -136,7 +135,6 @@ const savePlanning = async (req, res) => {
 
     const token = req.token;
     const planDetails = req.body.plan;
-    console.log(token);
 
     try{
 

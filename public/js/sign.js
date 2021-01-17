@@ -12,12 +12,19 @@ if(token){
     .then(res => res.json())
     .then(res => {
     if(res.data.access_token){
-        successAlert(res.data.username);
         window.location.replace("profile.html");
     }})
     .catch(error => {
-        console.error('Error:', error);
-        alert('系統錯誤,請稍後再試');
+        
+        window.localStorage.removeItem('Authorization');
+        Swal.fire({
+            title: '哎呀',
+            text: '登入過期，請重新登入',
+            icon: 'warning',
+            showConfirmButton: false,
+            timer: 1500
+        });
+        
         return error;
     });
 }

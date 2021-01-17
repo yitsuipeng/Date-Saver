@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const {socketView} = require('./routes/planning_model');
+const {socketView} = require('./server/models/planning_model');
 const app = express();
 
 const http = require('http').createServer(app);
@@ -17,7 +17,7 @@ app.use(express.static('public'));
 app.set('json spaces', 2);
 
 //connect to other js files
-app.use('/api/1.0', require('./routes/routers'));
+app.use('/api/1.0', require('./server/routers'));
 
 // Page not found
 app.use(function (req, res, next) {
