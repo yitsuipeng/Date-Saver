@@ -99,7 +99,7 @@ async function initMap() {
 }
 
 
-fetch(`api/1.0/getHotOrders`, {
+fetch(`api/1.0/hot`, {
     method: 'GET',
     headers: new Headers({
         'Authorization': token

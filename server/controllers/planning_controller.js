@@ -1,5 +1,5 @@
-const { queryPool } = require('./db');
-const Main = require('./planning_model');
+const { queryPool } = require('../db');
+const Main = require('../models/planning_model');
 
 // index (not used then)
 const getIndexOption = async (req, res) => {
@@ -114,7 +114,6 @@ const optimization = async (req, res) => {
 const recommendation = async (req, res) => {
 
     const name = req.params.id;
-    console.log(name);
 
     let simQuery = await Main.checkMatrix(name);
 
@@ -136,7 +135,6 @@ const savePlanning = async (req, res) => {
 
     const token = req.token;
     const planDetails = req.body.plan;
-    console.log(token);
 
     try{
 
@@ -152,8 +150,8 @@ const savePlanning = async (req, res) => {
     
         await Main.saveOrder(orderInfo);
         const places = await Main.checkNewPlace();
+
         let newSiteArray = [];
-    
         for(let x of planDetails.schedule){
             let same = 0;
             for(let y of places){
@@ -167,8 +165,10 @@ const savePlanning = async (req, res) => {
     
             }
         }
+        if(newSiteArray.length > 0){
+            await Main.createNewPlace(newSiteArray);
+        }
 
-        await Main.createNewPlace(newSiteArray);
         await Main.collaborativeFiltering();
         console.log('succeed');
 
