@@ -124,7 +124,7 @@ const recommendation = async (req, res) => {
             return (b.sim - a.sim);
         });
         let simResult = simQuery.filter(x => x.first != x.second ).slice(0, 3);
-        console.log(simResult);
+        console.log(simResult.length);
         
         res.status(200).send({ data: simResult });
     } 

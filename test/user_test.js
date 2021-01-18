@@ -7,6 +7,7 @@ const {
     truncateFakeData,
     users
 } = require('./fake_data');
+const { optimization } = require('../server/controllers/planning_controller');
 
 
 chai.use(chaiHttp);
@@ -207,6 +208,91 @@ describe('signUp API', function() {
 
         assert.equal(res.status, 400);
         assert.equal(res.body.error, 'email 格式錯誤');
+    });
+
+});
+
+describe('planning', function() {
+
+    it('optimization', async () => {
+     
+        const input = [
+            {
+              url: 'https://maps.google.com/?cid=13710718655141926794',
+              name: '國立國父紀念館',
+              rating: 4.4,
+              location: { lat: 25.0400306, lng: 121.5602452 },
+              address: '110台灣台北市信義區仁愛路四段505號',
+              place_id: 'ChIJwyJxyO6pQjQRilcOb_lBRr4' 
+            },
+            {
+              url: 'https://maps.google.com/?cid=4666121925590788471',
+              name: 'Lady M 旗艦店',
+              rating: 3.9,
+              location: { lat: 25.0408647, lng: 121.5562978 },
+              address: '106台灣台北市大安區光復南路240巷26號',
+              place_id: 'ChIJe2UCUMarQjQRdymATStlwUA' 
+            },
+            {
+              name: '湳山戲院',
+              location: { lat: 25.031574, lng: 121.553818 },
+              place_id: 'ChIJMf2bf8yrQjQR6mxaFuzD9WE',    photo: '150.jpg',
+              url: 'https://maps.google.com/?cid=7058763409727843562',
+              place_key: 'movie',
+              address: '106台灣台北市大安區通化街24巷1號'
+            },
+            {
+              name: '台北探索館',
+              location: { lat: 25.0375241, lng: 121.5638158 },
+              place_id: 'ChIJXVRz3LmrQjQR1rQIrWs8Q8s',    photo: '102.JPG',
+              url: 'https://maps.google.com/?cid=14646616846301181142',
+              place_key: 'art',
+              address: '110台灣台北市信義區市府路1號' 
+            }
+          ];
+            
+        const result = await requester
+            .post('/api/1.0/optimization')
+            .send(input);
+        
+        const output = [
+            {
+              url: 'https://maps.google.com/?cid=13710718655141926794',
+              name: '國立國父紀念館',
+              rating: 4.4,
+              location: { lat: 25.0400306, lng: 121.5602452 },
+              address: '110台灣台北市信義區仁愛路四段505號',
+              place_id: 'ChIJwyJxyO6pQjQRilcOb_lBRr4' 
+            },
+            {
+              name: '台北探索館',
+              location: { lat: 25.0375241, lng: 121.5638158 },
+              place_id: 'ChIJXVRz3LmrQjQR1rQIrWs8Q8s',    photo: '102.JPG',
+              url: 'https://maps.google.com/?cid=14646616846301181142',
+              place_key: 'art',
+              address: '110台灣台北市信義區市府路1號' 
+            },
+            {
+              url: 'https://maps.google.com/?cid=4666121925590788471',
+              name: 'Lady M 旗艦店',
+              rating: 3.9,
+              location: { lat: 25.0408647, lng: 121.5562978 },
+              address: '106台灣台北市大安區光復南路240巷26號',
+              place_id: 'ChIJe2UCUMarQjQRdymATStlwUA' 
+            },
+            {
+              name: '湳山戲院',
+              location: { lat: 25.031574, lng: 121.553818 },
+              place_id: 'ChIJMf2bf8yrQjQR6mxaFuzD9WE',    photo: '150.jpg',
+              url: 'https://maps.google.com/?cid=7058763409727843562',
+              place_key: 'movie',
+              address: '106台灣台北市大安區通化街24巷1號'
+            }
+          ];
+
+        assert.equal(result.status, 200);
+        assert.equal(JSON.stringify(result.body), JSON.stringify(output));
+
     });
 
 });
