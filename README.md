@@ -55,7 +55,7 @@ Website Link: https://date-saver.online/
 - Design Pattern: MVC
 
 ## Architecture
-![image](https://s3-ap-northeast-1.amazonaws.com/stylisherin.site/date-saver/readme/workflow.png)
+![image](https://s3-ap-northeast-1.amazonaws.com/stylisherin.site/date-saver/readme/workflow-2.png)
 
 ## Database schema
 ![image](https://s3-ap-northeast-1.amazonaws.com/stylisherin.site/date-saver/readme/structure.PNG)
