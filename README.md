@@ -21,9 +21,6 @@ Website Link: https://date-saver.online/
     <a href="#Features">Features</a>
   </li>
   <li>
-    <a href="#Demo Account">Demo Account</a>
-  </li>
-  <li>
     <a href="#Contact">Contact</a>
   </li>
 </ul>
